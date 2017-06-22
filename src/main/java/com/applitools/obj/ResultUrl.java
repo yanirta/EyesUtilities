@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
  * Created by yanir on 07/12/2016.
  */
 public class ResultUrl {
-    private static final String RESULT_REGEX = "^https:\\/\\/(?<serverURL>.+)\\/app\\/(sessions|batches)\\/(?<batchId>\\d+)\\/(?<sessionId>\\d+).*$";
+    //TODO consider http
+    private static final String RESULT_REGEX = "^http(s?):\\/\\/(?<serverURL>.+)\\/app\\/(sessions|batches)\\/(?<batchId>\\d+)\\/(?<sessionId>\\d+).*$";
     private final String batchId_;
     private final String sessionId_;
     private final String serverURL_;

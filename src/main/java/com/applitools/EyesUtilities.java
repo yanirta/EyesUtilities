@@ -1,7 +1,6 @@
 package com.applitools;
 
 import com.applitools.Commands.*;
-import com.applitools.utils.Utils;
 import com.beust.jcommander.JCommander;
 
 public class EyesUtilities {
@@ -9,13 +8,16 @@ public class EyesUtilities {
     Parse parser = new Parse();
     DownloadDiffs downloadDiffs = new DownloadDiffs();
     DownloadImages downloadImages = new DownloadImages();
-    DetailedReport detailedReport = new DetailedReport();
+    DetailedReport detailedReport = new DetailedReport(); //TODO remove
+    Report report = new Report();
     CopyBranch copyBranch = new CopyBranch();
     AnimatedDiffs animatedDiffs = new AnimatedDiffs();
 
     public static void main(String[] args) {
         EyesUtilities main = new EyesUtilities();
         JCommander jc = new JCommander();
+        jc.setProgramName("EyesUtilities");
+
         try {
             main.run(jc, args);
         } catch (Exception e) {
@@ -31,6 +33,7 @@ public class EyesUtilities {
         jc.addCommand("diffs", downloadDiffs);
         jc.addCommand("images", downloadImages);
         jc.addCommand("details", detailedReport);
+        jc.addCommand("report", report);
         jc.addCommand("copybranch", copyBranch);
         jc.addCommand("anidiffs", animatedDiffs);
         jc.parse(args);
@@ -41,27 +44,8 @@ public class EyesUtilities {
             return;
         }
 
-        Commands command = Utils.parseEnum(Commands.class, commandstr);
-        switch (command) {
-            case parse:
-                parser.run();
-                break;
-            case diffs:
-                downloadDiffs.run();
-                break;
-            case images:
-                downloadImages.run();
-                break;
-            case details:
-                detailedReport.run();
-                break;
-            case copybranch:
-                copyBranch.run();
-                break;
-            case anidiffs:
-                animatedDiffs.run();
-                break;
-        }
+        Command command = (Command) jc.getCommands().get(jc.getParsedCommand()).getObjects().get(0);
+        command.run();
 
         //TODO Migrate test
         //TODO analyze scrollable areas

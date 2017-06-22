@@ -16,6 +16,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>RELEASE</version>
@@ -45,5 +52,10 @@
             <version>RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 </project>

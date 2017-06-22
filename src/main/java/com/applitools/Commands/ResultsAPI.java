@@ -7,9 +7,10 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ResultsAPI {
+public abstract class ResultsAPI implements Command {
     @Parameter(description = "<result url>", required = true)
     private List<String> url;
+
     @Parameter(names = {"-k", "-key"}, description = "Enterprise view key", required = true)
     protected String viewKey;
 

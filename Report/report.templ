@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Batch summary report for '$batch.name' from $batch.startedAt</title>
+    </head>
+    <body>
+        <a class="logo" href="https://applitools.com">
+            <img src="http://applitools.com/images/applitools.png">
+        </a>
+        <div>
+            Batch name: <a href="$batch.batchUrl"> $batch.name </a> <br/>
+            Batch id: $batch.id<br/>
+            Batch started at: $batch.startedAt<br/>
+        </div>
+        #set($i = 0)
+        <ul>
+        #foreach($test in $batch.tests)
+           #set($i = $i + 1)
+           <li>
+                <div>$i: Test name: <a href="$test.getUrl()steps/1"> $test.scenarioName </a></div><br/>
+                #foreach($step in $test.getFailedSteps())
+                    <img src="$step.getAnimatedThumbprints()" height="200"/>
+                #end
+                <div> Steps
+                Total: $test.TotalActualSteps(),
+                Passed: $test.PassedCount(),
+                Failed: $test.FailedCount(),
+                New: $test.NewCount(),
+                Missing: $test.MissingCount()</div>
+           </li><br/>
+        #end
+        </ul>
+
+        <div>Summary</div><br/>
+        <table border="1">
+            <caption><em>Batch summary report</em></caption>
+            <tr> <th>           <th> Tests              <th>Steps                           <th> Steps rate
+            <tr> <th> Passed    <th> $batch.testsPassed <th>$batch.getStepsPassed()         <th> $batch.getPassedRate()%
+            <tr> <th> Failed    <th> $batch.testsFailed <th>$batch.getStepsFailed()         <th> $batch.getFailedRate()%
+            <tr> <th> New       <th> $batch.testsNew    <th>$batch.getStepsNew()            <th> $batch.getNewRate()%
+            <tr> <th> Total     <th> $i                 <th>$batch.getTotalBaselineSteps()  <th> -
+        </table>
+    </body>
+</html>
