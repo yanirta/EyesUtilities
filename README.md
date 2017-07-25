@@ -125,6 +125,7 @@ A complete example of a template can be found in[./Report/report.templ](https://
 This example generates html report but the same idea can be applied on any textual format.
 
 ##Resources
-+ applitools website
-+ web tester
-+ image tester
++ [Applitools website](https://applitools.com)
++ [Web-Tester](https://github.com/yanirta/WebTester)
++ [Image-Tester](https://github.com/yanirta/ImageTester)
++ [Applitools support portal](http://support.applitools.com/)
