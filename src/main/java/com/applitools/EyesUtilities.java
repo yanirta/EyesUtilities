@@ -8,7 +8,7 @@ public class EyesUtilities {
     Parse parser = new Parse();
     DownloadDiffs downloadDiffs = new DownloadDiffs();
     DownloadImages downloadImages = new DownloadImages();
-    DetailedReport detailedReport = new DetailedReport(); //TODO remove
+    Details detailedReport = new Details(); //TODO remove
     Report report = new Report();
     CopyBranch copyBranch = new CopyBranch();
     AnimatedDiffs animatedDiffs = new AnimatedDiffs();

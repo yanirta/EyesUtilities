@@ -1,6 +1,6 @@
 package com.applitools.Commands;
 
-import com.applitools.obj.APIContext;
+import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.ActualStepResult;
 import com.applitools.obj.ExpectedStepResult;
 import com.applitools.utils.Utils;
@@ -37,7 +37,7 @@ public class FailedStep {
             throw new InvalidParameterException("outFolder is null");
         if (!outFolder.exists() && !outFolder.mkdirs())
             throw new RuntimeException("Unable to create outfolder");
-        APIContext ctx = APIContext.instance();
+        ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL expectedImageURL = ctx.getImageUrl(expectedImageId);
         URL actualImageURL = ctx.getImageUrl(actualImageId);
         URL diffImageURL = ctx.getDiffImageUrl(testId, index);

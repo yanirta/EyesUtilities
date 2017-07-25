@@ -1,6 +1,6 @@
 package com.applitools.Commands;
 
-import com.applitools.obj.APIContext;
+import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.BatchInfo;
 import com.beust.jcommander.Parameter;
 import org.apache.velocity.Template;
@@ -55,7 +55,7 @@ public class Report extends ResultsAPI {
                 , "/artifacts/");
 
         if (!artifacts.exists()) artifacts.mkdirs();
-        APIContext ctx = APIContext.init(getUrl(), viewKey, artifacts);
+        ResultsAPIContext ctx = ResultsAPIContext.init(getUrl(), viewKey, artifacts);
         VelocityContext context = new VelocityContext();
         BatchInfo batchInfo = BatchInfo.get(ctx);
         context.internalPut("batch", batchInfo);

@@ -8,7 +8,7 @@ import com.beust.jcommander.Parameters;
 import java.security.InvalidParameterException;
 import java.util.List;
 
-@Parameters(commandDescription = "Parse result url and extract it's components")
+@Parameters(commandDescription = "Parse result url and extract it's components", hidden = true)
 public class Parse implements Command {
     @Parameter(description = "<result url>")
     private List<String> url;

@@ -7,7 +7,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription = "Get detailed report of a test")
-public class DetailedReport extends ResultsAPI {
+public class Details extends ResultsAPI {
 
     @Parameter(names = {"-s", "-stepResults"}, description = "Include steps results")
     private boolean stepResults = false;

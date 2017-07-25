@@ -1,23 +1,18 @@
 package com.applitools.Commands;
 
 
-import com.applitools.utils.Utils;
+import com.applitools.obj.Contexts.BranchesAPIContext;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.IOException;
-
 @Parameters(commandDescription = "Performs copy based branch operations")
-public class CopyBranch {
+public class CopyBranch extends LongTaskAPI {
     private static ObjectMapper mapper = new ObjectMapper();
-    private static final String BRANCHES_URL_TMPL = "https://%s/api/baselines/copybranch?accesskey=%s";
 
-    @Parameter(names = {"-k", "-key"}, description = "Enterprise access key", required = true)
-    private String accessKey;
+
+    @Parameter(names = {"-k", "-key"}, description = "Branch management api key", required = true)
+    private String branchKey;
     @Parameter(names = {"-as", "-server"}, description = "Set Applitools server url. [default eyes.applitools.com]")
     private String server = "eyes.applitools.com";
     @Parameter(names = {"-a", "-app"}, description = "The application name that was used in the tests", required = true)
@@ -32,22 +27,6 @@ public class CopyBranch {
     private boolean copyAll = false;
     @Parameter(names = {"-d", "deleteSource"}, description = "Delete the source branch once a successfully merged")
     private boolean deleteSourceBranch = false;
-
-    public void run() throws InterruptedException, IOException {
-        HttpPost post = new HttpPost(String.format(BRANCHES_URL_TMPL, server, accessKey));
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(this);
-            StringEntity entity = new StringEntity(json);
-            post.setEntity(entity);
-            post.addHeader("Content-Type", "application/json");
-            Utils.sendAsLongRunningTask(post, accessKey);
-            System.out.println("Success");
-        } catch (HttpResponseException e) {
-            System.out.printf("%s - Failed! \n %s", e.getStatusCode(), e.getMessage());
-            throw e;
-        }
-    }
 
     public String getAppName() {
         return appName;
@@ -95,5 +74,9 @@ public class CopyBranch {
 
     public void setDeleteSourceBranch(boolean deleteSourceBranch) {
         this.deleteSourceBranch = deleteSourceBranch;
+    }
+
+    public String getTaskUrl() {
+        return BranchesAPIContext.Init(server, branchKey).getComposedUrl();
     }
 }

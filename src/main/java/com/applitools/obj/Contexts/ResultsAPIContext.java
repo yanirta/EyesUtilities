@@ -1,35 +1,37 @@
-package com.applitools.obj;
+package com.applitools.obj.Contexts;
+
+import com.applitools.obj.ResultUrl;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class APIContext {
+public class ResultsAPIContext {
     private static final String BATCHINFO_URL_TMPL = "https://%s/api/sessions/batches/%s?ApiKey=%s&format=json";
     private static final String BATCH_URL_TEMPLATE = "https://%s/app/batches/%s";
     private static final String TEST_URL_TEMPLATE = "https://%s/app/sessions/%s/%s/";
     private static final String IMAGE_URL_TEMPLATE = "https://%s/api/images/%s/?ApiKey=%s";
     private static final String DIFF_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s/steps/%s/diff?ApiKey=%s";
 
-    private static APIContext context_;
+    private static ResultsAPIContext context_;
     private final ResultUrl url;
     private final String viewkey;
     private File artifactsFolder;
 
-    private APIContext(ResultUrl url, String viewkey, File artifactsOut) {
+    private ResultsAPIContext(ResultUrl url, String viewkey, File artifactsOut) {
         this.url = url;
         this.viewkey = viewkey;
         this.artifactsFolder = artifactsOut;
     }
 
-    public static synchronized APIContext init(ResultUrl url, String viewkey, File artifactsOut) {
+    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey, File artifactsOut) {
         if (context_ != null)
             throw new RuntimeException("Invaild call of Context.init(...)");
-        context_ = new APIContext(url, viewkey, artifactsOut);
+        context_ = new ResultsAPIContext(url, viewkey, artifactsOut);
         return context_;
     }
 
-    public static APIContext instance() {
+    public static ResultsAPIContext instance() {
         return context_;
     }
 

@@ -1,5 +1,6 @@
 package com.applitools.obj;
 
+import com.applitools.obj.Contexts.ResultsAPIContext;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -30,7 +31,7 @@ public class BatchInfo {
     private BatchInfo() {
     }
 
-    public static BatchInfo get(APIContext ctx) throws IOException {
+    public static BatchInfo get(ResultsAPIContext ctx) throws IOException {
         URL batchUrl = ctx.getBatchAPIurl();
 
         TestInfo[] infos = mapper.readValue(batchUrl, TestInfo[].class);

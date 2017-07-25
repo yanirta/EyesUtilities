@@ -1,6 +1,7 @@
 package com.applitools.obj;
 
 import com.applitools.Commands.FailedStep;
+import com.applitools.obj.Contexts.ResultsAPIContext;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -256,7 +257,7 @@ public class TestInfo {
     //endregion
 
     public String getUrl() throws MalformedURLException {
-        return APIContext.instance().getTestAppurl(getId()).toString();//TODO to check
+        return ResultsAPIContext.instance().getTestAppurl(getId()).toString();//TODO to check
     }
 
     public int TotalBaselineSteps() {
@@ -315,7 +316,7 @@ public class TestInfo {
         LinkedList<FailedStep> failedSteps = new LinkedList();
 
         StepResult[] stepsResults = getStepsResults();
-        File testArtifact = new File(APIContext.instance().getArtifactsFolder(), getId());
+        File testArtifact = new File(ResultsAPIContext.instance().getArtifactsFolder(), getId());
         for (int i = 0; i < stepsResults.length; ++i) {
             if (stepsResults[i] == StepResult.Failed) {
                 failedSteps.add(

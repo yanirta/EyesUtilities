@@ -26,9 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-/**
- * Created by yanir on 18/04/2016.
- */
 public class Utils {
 
     public static <T extends Enum<T>> T parseEnum(Class<T> c, String string) {
@@ -74,52 +71,6 @@ public class Utils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(calendar.getTime());
-    }
-
-    public static void sendAsLongRunningTask(HttpUriRequest request, String accessKey) throws IOException, InterruptedException {
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        try {
-            String date = Utils.getRFC1123Date();
-            setLongTaskHeaders(request, date);
-            CloseableHttpResponse response = client.execute(request);
-            //If shorter than 10sec on server side
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) return;
-            String statusUrl = buildStatusUrl(response, accessKey);
-            HttpUriRequest status = setLongTaskHeaders(new HttpGet(statusUrl), date);
-
-            do {
-                switch (response.getStatusLine().getStatusCode()) {
-                    case HttpStatus.SC_OK:
-                        response.close();
-                        Thread.sleep(2000);
-                        response = client.execute(status);
-                        break;
-                    case HttpStatus.SC_CREATED:
-                        statusUrl = buildStatusUrl(response, accessKey);
-                        response.close();
-                        status = new HttpDelete(statusUrl);
-                        response = client.execute(status);
-                        if (response.getStatusLine().getStatusCode() != 200)
-                            throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-                        return;
-                    default:
-                        throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-                }
-            } while (true);
-        } finally {
-            client.close();
-        }
-    }
-
-    private static String buildStatusUrl(HttpResponse response, String accessKey) {
-        Header location = response.containsHeader("Location") ? response.getFirstHeader("Location") : null;
-        return (location != null) ? String.format("%s?accessKey=%s", location.getValue(), accessKey) : null;
-    }
-
-    private static HttpUriRequest setLongTaskHeaders(HttpUriRequest r, String date) {
-        r.addHeader("Eyes-Expect", "202+location");
-        r.addHeader("Eyes-Date", date);
-        return r;
     }
 
     public static void createAnimatedGif(List<BufferedImage> images, File target, int timeBetweenFrames) throws IOException {
