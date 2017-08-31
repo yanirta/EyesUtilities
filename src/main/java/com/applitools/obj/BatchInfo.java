@@ -94,6 +94,10 @@ public class BatchInfo {
         return tests;
     }
 
+    public int getTotalTests() {
+        return tests.length;
+    }
+
     public int getTestsNew() {
         return testsNew;
     }

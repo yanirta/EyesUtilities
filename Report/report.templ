@@ -1,44 +1,181 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Batch summary report for '$batch.name' from $batch.startedAt</title>
+        <title>Applitools batch summary report for '$batch.name' from $batch.startedAt</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     </head>
     <body>
-        <a class="logo" href="https://applitools.com">
-            <img src="http://applitools.com/images/applitools.png">
-        </a>
-        <div>
-            Batch name: <a href="$batch.batchUrl"> $batch.name </a> <br/>
-            Batch id: $batch.id<br/>
-            Batch started at: $batch.startedAt<br/>
-        </div>
-        #set($i = 0)
-        <ul>
-        #foreach($test in $batch.tests)
-           #set($i = $i + 1)
-           <li>
-                <div>$i: Test name: <a href="$test.getUrl()steps/1"> $test.scenarioName </a></div><br/>
-                #foreach($step in $test.getFailedSteps())
-                    <img src="$step.getAnimatedThumbprints()" height="200"/>
-                #end
-                <div> Steps
-                Total: $test.TotalActualSteps(),
-                Passed: $test.PassedCount(),
-                Failed: $test.FailedCount(),
-                New: $test.NewCount(),
-                Missing: $test.MissingCount()</div>
-           </li><br/>
-        #end
-        </ul>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" integrity="sha256-owX7sroiO/O1a7h3a4X29A1g3QgqdNvijRQ7V5TH45M=" crossorigin="anonymous"></script>
 
-        <div>Summary</div><br/>
-        <table border="1">
-            <caption><em>Batch summary report</em></caption>
-            <tr> <th>           <th> Tests              <th>Steps                           <th> Steps rate
-            <tr> <th> Passed    <th> $batch.testsPassed <th>$batch.getStepsPassed()         <th> $batch.getPassedRate()%
-            <tr> <th> Failed    <th> $batch.testsFailed <th>$batch.getStepsFailed()         <th> $batch.getFailedRate()%
-            <tr> <th> New       <th> $batch.testsNew    <th>$batch.getStepsNew()            <th> $batch.getNewRate()%
-            <tr> <th> Total     <th> $i                 <th>$batch.getTotalBaselineSteps()  <th> -
-        </table>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://applitools.com" style="padding: 10px 10px;">
+                    <img src="http://applitools.com/images/applitools.png">
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a target="_blank" href="$batch.batchUrl" style="font-size: 20px; font-weight: bold;"> $batch.name </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="page-header">
+                <h1>Batch summary report</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th> </th>
+                                <th>Failed</th>
+                                <th>Passed</th>
+                                <th>New</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tests</td>
+                                <td>$batch.testsFailed</td>
+                                <td>$batch.testsPassed</td>
+                                <td>$batch.testsNew</td>
+                                <td>$batch.getTotalTests()</td>
+                            </tr>
+                            <tr>
+                                <td>Steps</td>
+                                <td>$batch.getStepsFailed()</td>
+                                <td>$batch.getStepsPassed()</td>
+                                <td>$batch.getStepsNew()</td>
+                                <td>$batch.getTotalBaselineSteps()</td>
+                            </tr>
+                            <tr>
+                                <td>% Steps</td>
+                                <td>$batch.getFailedRate()%</td>
+                                <td>$batch.getPassedRate()%</td>
+                                <td>$batch.getNewRate()%</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="tests-chart"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="steps-chart"></div>
+                        </div>
+                        <script type="text/javascript">
+                        // Load google charts
+                        google.charts.load('current', {'packages':['corechart']});
+                        google.charts.setOnLoadCallback(drawChart);
+
+                        // Draw the chart and set the chart values
+                        function drawChart() {
+                          var tests = google.visualization.arrayToDataTable([
+                          ['Item', 'Count'],
+                          ['Failed', $batch.testsFailed],
+                          ['Passed', $batch.testsPassed],
+                          ['New', $batch.testsNew]
+                        ]);
+
+                        var steps = google.visualization.arrayToDataTable([
+                          ['Item', 'Count'],
+                          ['Failed', $batch.getStepsFailed()],
+                          ['Passed', $batch.getStepsPassed()],
+                          ['New', $batch.getStepsNew()]
+                        ]);
+
+                          // Optional; add a title and set the width and height of the chart
+                          var options = {
+                            title:'Tests',
+                            is3D: true,
+                            slices: {
+                                    0: { color: 'red' },
+                                    1: { color: 'green' },
+                                    2: { color: 'blue' }
+                                }
+                            };
+                          var testsChart = new google.visualization.PieChart(document.getElementById('tests-chart'));
+                          var stepsChart = new google.visualization.PieChart(document.getElementById('steps-chart'));
+                          testsChart.draw(tests, options);
+                          options['title'] = 'Steps';
+                          stepsChart.draw(steps, options);
+                        }
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div>-->
+                <!--Batch id: $batch.id<br/>-->
+                <!--Batch started at: $batch.startedAt<br/>-->
+            <!--</div>-->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped" style="border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Status</th>
+                                <th>Name</th>
+                                <th>#Steps</th>
+                                <th>Failed</th>
+                                <th>Passed</th>
+                                <th>New</th>
+                                <th>Missing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        #set($i = 0)
+                        #foreach($test in $batch.tests)
+                            #set($i = $i + 1)
+                            #if ($test.getIsNew())
+                                #set($class = "label-info")
+                            #elseif ($test.getIsDifferent())
+                                #set($class = "label-danger")
+                            #else
+                                #set($class = "label-success")
+                        #end
+                            <tr data-toggle="collapse" class="accordion-toggle" data-target="#diffs$i">
+                                <td>$i</td>
+                                <td><h5><span class="label $class">$test.Result()</span></h5></td>
+                                <td><a href="$test.getUrl()steps/1"> $test.scenarioName </a></td>
+                                <td>$test.TotalActualSteps()</td>
+                                <td>$test.FailedCount()</td>
+                                <td>$test.PassedCount()</td>
+                                <td>$test.NewCount()</td>
+                                <td>$test.MissingCount()</td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" class="hiddenRow">
+                                    <div class="accordian-body collapse" id="diffs$i">
+                                #foreach($step in $test.getFailedSteps())
+                                ## <!--<img src="$step.getAnimatedThumbprints()" height="200"/>-->
+                                        <img src="$step.getAnimatedThumbprints(true)" style="height: 200px;" class="img-thumbnail"/>
+                                #end
+                                    </div>
+                                <td>
+                            </tr>
+                        #end
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

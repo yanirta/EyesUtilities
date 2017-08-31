@@ -51,5 +51,6 @@ public class EyesUtilities {
         //TODO analyze scrollable areas
         //TODO analyze dynamic areas
         //TODO deep search in many batches
+        //TODO animated flows
     }
 }

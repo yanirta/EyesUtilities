@@ -1,11 +1,12 @@
 package com.applitools.Commands;
 
-import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.BatchInfo;
+import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.beust.jcommander.Parameter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,14 +16,25 @@ import java.io.StringWriter;
 public class Report extends ResultsAPI {
 
     @Parameter(names = {"-t", "--template"}, description = "!!!!")
-    private String templatefile = "report.templ";
+    private String templFileName = "report.templ";
 
     @Parameter(names = {"-d", "--destination"}, description = "!!!!")
     private String reportoutfile = "report.html";
 
+    private File templFile = null;
+
     public void run() throws Exception {
+        templFile = new File(templFileName);
+        Velocity.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
+        Velocity.setProperty("file.resource.loader.path", templFile.getParent().toString());
         Velocity.init();
         VelocityContext context = createContext();
+
+        if (context == null) {
+            System.out.printf("No information or unable to read it");
+            return;
+        }
+
         StringWriter writer = getReportStream(context);
         writeToFile(writer);
     }
@@ -38,7 +50,7 @@ public class Report extends ResultsAPI {
 
     private StringWriter getReportStream(VelocityContext context) {
         StringWriter sw = new StringWriter();
-        Template template = Velocity.getTemplate(templatefile);
+        Template template = Velocity.getTemplate(templFile.getName());
         template.merge(context, sw);
         sw.flush();
         return sw;
@@ -58,6 +70,7 @@ public class Report extends ResultsAPI {
         ResultsAPIContext ctx = ResultsAPIContext.init(getUrl(), viewKey, artifacts);
         VelocityContext context = new VelocityContext();
         BatchInfo batchInfo = BatchInfo.get(ctx);
+        if (batchInfo == null) return null;
         context.internalPut("batch", batchInfo);
         context.internalPut("server_url", getUrl().getServerAddress());
         return context;
