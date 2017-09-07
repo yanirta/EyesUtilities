@@ -73,7 +73,7 @@ public class ExtendedTestResult {
         StepResult[] results = getStepsResults();
         String[] urls = new String[results.length];
 
-        String diffUrlTemplate = "https://" + serverAddress_ + "/api/sessions/%s/steps/%s/diff?ApiKey=%s";
+        String diffUrlTemplate = "https://" + serverAddress_ + "/api/sessions/batches/%s/steps/%s/diff?ApiKey=%s";
         for (int step = 0; step < results.length; ++step) {
             if (results[step] == StepResult.Failed) {
                 urls[step] = String.format(diffUrlTemplate, sessionId_, step + 1, viewKey_);

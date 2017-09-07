@@ -9,7 +9,8 @@ import java.net.URL;
 public class ResultsAPIContext {
     private static final String BATCHINFO_URL_TMPL = "https://%s/api/sessions/batches/%s?ApiKey=%s&format=json";
     private static final String BATCH_URL_TEMPLATE = "https://%s/app/batches/%s";
-    private static final String TEST_URL_TEMPLATE = "https://%s/app/sessions/%s/%s/";
+    private static final String TEST_APP_URL_TEMPLATE = "https://%s/app/sessions/%s/%s/";
+    private static final String TEST_API_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s?ApiKey=%s&format=json";
     private static final String IMAGE_URL_TEMPLATE = "https://%s/api/images/%s/?ApiKey=%s";
     private static final String DIFF_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s/steps/%s/diff?ApiKey=%s";
 
@@ -56,11 +57,27 @@ public class ResultsAPIContext {
                 url.getBatchId()));
     }
 
-    public URL getTestAppurl(String testId) throws MalformedURLException {
-        return new URL(String.format(TEST_URL_TEMPLATE,
+    public URL getTestAppUrl(String testId) throws MalformedURLException {
+        return new URL(String.format(TEST_APP_URL_TEMPLATE,
                 url.getServerAddress(),
                 url.getBatchId(),
                 testId));
+    }
+
+    public URL getTestApiUrl() throws MalformedURLException {
+        return new URL(String.format(TEST_API_URL_TEMPLATE,
+                url.getServerAddress(),
+                url.getBatchId(),
+                url.getSessionId(),
+                viewkey));
+    }
+
+    public URL getTestApiUrl(String testId) throws MalformedURLException {
+        return new URL(String.format(TEST_API_URL_TEMPLATE,
+                url.getServerAddress(),
+                url.getBatchId(),
+                testId,
+                viewkey));
     }
 
     public URL getImageUrl(String imageId) throws MalformedURLException {

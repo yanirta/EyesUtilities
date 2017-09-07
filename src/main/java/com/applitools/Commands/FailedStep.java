@@ -33,6 +33,10 @@ public class FailedStep {
     }
 
     private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists) throws IOException {
+        return getAnimatedDiff(expectedImageId, actualImageId, withDiff, skipIfExists, ANIMATION_TRANSITION_INTERVAL);
+    }
+
+    private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
         if (outFolder == null)
             throw new InvalidParameterException("outFolder is null");
         if (!outFolder.exists() && !outFolder.mkdirs())
@@ -48,7 +52,8 @@ public class FailedStep {
                 expectedImageURL.toString(),
                 actualImageURL.toString(),
                 withDiff ? diffImageURL.toString() : null,
-                destination
+                destination,
+                transitionInterval
         );
 
         return destination.toString();
@@ -56,6 +61,10 @@ public class FailedStep {
 
     public String getAnimatedDiff() throws IOException {
         return getAnimatedDiff(expected.getImageId(), actual.getImageId(), true, false);
+    }
+
+    public String getAnimatedDiff(int transitionInterval) throws IOException {
+        return getAnimatedDiff(expected.getImageId(), actual.getImageId(), true, false, transitionInterval);
     }
 
     public String getAnimatedThumbprints() throws IOException {
@@ -70,12 +79,15 @@ public class FailedStep {
         }
     }
 
+    public Integer getIndex() {
+        return index;
+    }
 
-    private static void saveAnimatedDiff(String baselineImg, String actualImg, String diffImg, File target) throws IOException {
+    private static void saveAnimatedDiff(String baselineImg, String actualImg, String diffImg, File target, int transitionInterval) throws IOException {
         List<BufferedImage> images = new ArrayList<BufferedImage>(3);
         images.add(ImageIO.read(new URL(baselineImg)));
         images.add(ImageIO.read(new URL(actualImg)));
         if (diffImg != null) images.add(ImageIO.read(new URL(diffImg)));
-        Utils.createAnimatedGif(images, target, ANIMATION_TRANSITION_INTERVAL);
+        Utils.createAnimatedGif(images, target, transitionInterval);
     }
 }

@@ -44,6 +44,8 @@ public class TestInfo {
     private Object branch;
     private Object baselineBranchName;
     private StepResult[] stepsResults = null;
+    private Integer revision;
+    private Boolean isStarred;
     //endregion
 
     //region getters/setters
@@ -257,7 +259,7 @@ public class TestInfo {
     //endregion
 
     public String getUrl() throws MalformedURLException {
-        return ResultsAPIContext.instance().getTestAppurl(getId()).toString();//TODO to check
+        return ResultsAPIContext.instance().getTestAppUrl(getId()).toString();//TODO to check
     }
 
     public int TotalBaselineSteps() {
@@ -316,7 +318,10 @@ public class TestInfo {
         LinkedList<FailedStep> failedSteps = new LinkedList();
 
         StepResult[] stepsResults = getStepsResults();
-        File testArtifact = new File(ResultsAPIContext.instance().getArtifactsFolder(), getId());
+        ResultsAPIContext ctx = ResultsAPIContext.instance();
+        ResultUrl ctxUrl = ctx.getUrl();
+        String subpath = String.format("%s//%s", ctxUrl.getBatchId(), getId());
+        File testArtifact = new File(ctx.getArtifactsFolder(), subpath);
         for (int i = 0; i < stepsResults.length; ++i) {
             if (stepsResults[i] == StepResult.Failed) {
                 failedSteps.add(
@@ -376,6 +381,22 @@ public class TestInfo {
 
     public void setBaselineBranchName(Object baselineBranchName) {
         this.baselineBranchName = baselineBranchName;
+    }
+
+    public Integer getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Integer revision) {
+        this.revision = revision;
+    }
+
+    public Boolean getIsStarred() {
+        return isStarred;
+    }
+
+    public void setIsStarred(Boolean starred) {
+        isStarred = starred;
     }
     //endregion
 }
