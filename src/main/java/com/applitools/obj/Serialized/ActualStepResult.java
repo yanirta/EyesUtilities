@@ -1,4 +1,4 @@
-package com.applitools.obj;
+package com.applitools.obj.Serialized;
 
 import java.util.HashMap;
 

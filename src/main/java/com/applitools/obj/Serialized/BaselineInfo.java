@@ -1,17 +1,12 @@
-package com.applitools.obj;
+package com.applitools.obj.Serialized;
 
+import com.applitools.obj.ResultUrl;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
-/**
- * Created by yanir on 26/12/2016.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BaselineInfo {
     private static String BASELINES_URL_TMPL = "https://%s/api/baselines?ApiKey=%s&format=json";
@@ -75,15 +70,4 @@ public class BaselineInfo {
         URL baselines = new URL(String.format(BASELINES_URL_TMPL, resultUrl.getServerAddress(), viewkey));
         return mapper.readValue(baselines, BaselineInfo[].class);
     }
-
-    public static BaselineInfo get(ResultUrl resultUrl, String viewkey, ExtendedTestResult testResult) throws IOException {
-        BaselineInfo[] infos = getAll(resultUrl, viewkey);
-        String modelId = testResult.getBaselineModelId();
-        for (BaselineInfo info : infos) {
-            if (info.getBaselineModelId().equals(modelId)) return info;
-        }
-
-        return null;
-    }
-
 }

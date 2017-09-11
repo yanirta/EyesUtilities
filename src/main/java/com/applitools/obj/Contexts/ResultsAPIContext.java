@@ -96,6 +96,13 @@ public class ResultsAPIContext {
                 viewkey));
     }
 
+    public URL getImageResource(String imageId) throws MalformedURLException {
+        return new URL(String.format(IMAGE_URL_TEMPLATE,
+                url.getServerAddress(),
+                imageId,
+                viewkey));
+    }
+
     public File getArtifactsFolder() {
         return artifactsFolder;
     }

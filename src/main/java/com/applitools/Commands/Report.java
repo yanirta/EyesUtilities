@@ -1,6 +1,6 @@
 package com.applitools.Commands;
 
-import com.applitools.obj.BatchInfo;
+import com.applitools.obj.Serialized.BatchInfo;
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -14,14 +14,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
-@Parameters(commandDescription = "Prepare report based on a template", hidden = true)
+@Parameters(commandDescription = "Prepare report based on a template")
 
 public class Report extends ResultsAPI {
 
-    @Parameter(names = {"-t", "--template"}, description = "!!!!")
+    @Parameter(names = {"-t", "--template"}, description = "Template file.")
     private String templFileName = "report.templ";
 
-    @Parameter(names = {"-d", "--destination"}, description = "!!!!")
+    @Parameter(names = {"-d", "--destination"}, description = "Output folder destination.")
     private String reportoutfile = "report.html";
 
     private File templFile = null;

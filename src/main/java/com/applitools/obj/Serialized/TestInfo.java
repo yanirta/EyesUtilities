@@ -1,7 +1,10 @@
-package com.applitools.obj;
+package com.applitools.obj.Serialized;
 
-import com.applitools.Commands.FailedStep;
 import com.applitools.obj.Contexts.ResultsAPIContext;
+import com.applitools.obj.FailedStep;
+import com.applitools.obj.ResultUrl;
+import com.applitools.obj.Step;
+import com.applitools.obj.StepResult;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -320,7 +323,7 @@ public class TestInfo {
         StepResult[] stepsResults = getStepsResults();
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         ResultUrl ctxUrl = ctx.getUrl();
-        String subpath = String.format("%s//%s", ctxUrl.getBatchId(), getId());
+        String subpath = String.format("%s/%s", ctxUrl.getBatchId(), getId());
         File testArtifact = new File(ctx.getArtifactsFolder(), subpath);
         for (int i = 0; i < stepsResults.length; ++i) {
             if (stepsResults[i] == StepResult.Failed) {
@@ -334,6 +337,25 @@ public class TestInfo {
             }
         }
         return failedSteps;
+    }
+
+    public List<Step> getSteps() {
+        LinkedList<Step> steps = new LinkedList();
+
+        StepResult[] stepsResults = getStepsResults();
+        ResultsAPIContext ctx = ResultsAPIContext.instance();
+        ResultUrl ctxUrl = ctx.getUrl();
+        String subpath = String.format("%s/%s", ctxUrl.getBatchId(), getId());
+        File testArtifact = new File(ctx.getArtifactsFolder(), subpath);
+        for (int i = 0; i < stepsResults.length; ++i)
+            steps.add(
+                    new Step(
+                            i + 1,
+                            ExpectedAppOutput.get(i),
+                            ActualAppOutput.get(i),
+                            getId(),
+                            testArtifact));
+        return steps;
     }
 
     //region privates

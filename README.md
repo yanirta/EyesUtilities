@@ -118,8 +118,15 @@ Here is the partial list of parameters that are exposed for usage in template co
     + `$test.FailedCount()` - The count of the failed steps in test
     + `$test.NewCount()` - The count of the new steps in test
     + `$test.MissingCount()` - The count of the passed steps in test
-    + `#foreach($step in $test.getFailedSteps())` - While `$test.getFailedSteps()` is list of contained failed steps objects
-        + `$step.getAnimatedThumbprints()` - Downloads step animated thumbprint and returns his relative location.
+    + `#foreach($step in $test.getFailedSteps())` - While `$test.getFailedSteps()` is the list of contained failed steps objects
+        + `$step.getAnimatedThumbprints()` - Downloads step animated thumbprint and returns file's relative path.
+        + `$step.getExpectedImage()` - Downloads step baseline (expected) image and returns file's relative path.
+        + `$step.getActualImage()` - Downloads step actual image and returns file's relative path.
+        + `$step.getDiff()` - Downloads step diff image and returns file's relative path.
+    + `#foreach($step in $test.getSteps()` - While `$test.getSteps()` is the list of steps objects.
+        + `$step.getExpectedImage()` - Downloads step baseline (expected) image and returns file's relative path.
+        + `$step.getActualImage()` - Downloads step actual image and returns file's relative path.
+
         
 A complete example of a template can be found in[./Report/report.templ](https://github.com/yanirta/EyesUtilities/blob/master/Report/report.templ)  
 This example generates html report but the same idea can be applied on any textual format.

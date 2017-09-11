@@ -1,4 +1,4 @@
-package com.applitools.obj;
+package com.applitools.obj.Serialized;
 
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;

@@ -1,62 +1,49 @@
 package com.applitools.Commands;
 
-import com.applitools.obj.ExtendedTestResult;
-import com.applitools.obj.ResultUrl;
+import com.applitools.obj.Serialized.TestInfo;
+import com.applitools.obj.Step;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.security.InvalidParameterException;
+import java.util.List;
 
 @Parameters(commandDescription = "Download test steps images of a specific test")
-public class DownloadImages extends ResultsAPI {
-    private static final String BASELINE_IMG_TMPL = "step-%s-baseline.png";
-    private static final String ACTUAL_IMG_TMPL = "step-%s-actual.png";
+public class DownloadImages extends ResultsAPIProduct {
 
-    @Parameter(names = {"-d", "-destination"}, description = "Destination folder to save the images")
-    private String destination;
     @Parameter(names = {"-b"}, description = "Save only baselines")
     private boolean onlyBaselines = false;
     @Parameter(names = {"-a"}, description = "Save only actuals")
     private boolean onlyActuals = false;
 
-    private ResultUrl resultUrl;
-
     public DownloadImages() {
     }
 
     public DownloadImages(String url, String destination, String viewKey, boolean onlyBaselines, boolean onlyActuals) {
-        super(url, viewKey);
-        this.destination = destination;
+        super(url, viewKey, destination);
         this.onlyBaselines = onlyBaselines;
         this.onlyActuals = onlyActuals;
     }
 
-    public void run() throws Exception {
-        resultUrl = getUrl();
-
-        ExtendedTestResult extendedTestResult = new ExtendedTestResult(resultUrl, viewKey);
-        if (destination == null) destination = System.getProperty("user.dir");
-        File dir = new File(new File(destination, resultUrl.getBatchId()), resultUrl.getSessionId());
-        if (!dir.exists()) dir.mkdirs();
-        if (!onlyActuals && !onlyBaselines) {
-            saveImagesByUIDs(BASELINE_IMG_TMPL, extendedTestResult.getBaselineImagesUrls(), dir);
-            saveImagesByUIDs(ACTUAL_IMG_TMPL, extendedTestResult.getActualImagesUrls(), dir);
-        } else if (onlyBaselines) {
-            saveImagesByUIDs(BASELINE_IMG_TMPL, extendedTestResult.getBaselineImagesUrls(), dir);
-        } else {//only actuals
-            saveImagesByUIDs(ACTUAL_IMG_TMPL, extendedTestResult.getActualImagesUrls(), dir);
+    protected void runPerTest(TestInfo testInfo) throws IOException {
+        List<Step> steps = testInfo.getSteps();
+        for (Step step : steps) {
+            if (onlyBaselines) saveBaselineImage(step);
+            else if (onlyActuals) saveActualImage(step);
+            else saveImages(step);
         }
     }
 
-    private void saveImagesByUIDs(String nameTemplate, String[] urls, File dir) throws IOException {
-        for (int i = 0; i < urls.length; ++i) {
-            if (urls[i] == null) continue;
+    private void saveImages(Step step) throws IOException {
+        saveBaselineImage(step);
+        saveActualImage(step);
+    }
 
-            FileUtils.copyURLToFile(new URL(urls[i]), new File(dir, String.format(nameTemplate, i + 1)));
-        }
+    private void saveActualImage(Step step) throws IOException {
+        step.getActualImage();
+    }
+
+    private void saveBaselineImage(Step step) throws IOException {
+        step.getExpectedImage();
     }
 }
