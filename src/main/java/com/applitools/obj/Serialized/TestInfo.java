@@ -5,6 +5,7 @@ import com.applitools.obj.FailedStep;
 import com.applitools.obj.ResultUrl;
 import com.applitools.obj.Step;
 import com.applitools.obj.StepResult;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestInfo {
 
     //region Fields
@@ -49,6 +50,7 @@ public class TestInfo {
     private StepResult[] stepsResults = null;
     private Integer revision;
     private Boolean isStarred;
+    private String secretToken;
     //endregion
 
     //region getters/setters
@@ -419,6 +421,14 @@ public class TestInfo {
 
     public void setIsStarred(Boolean starred) {
         isStarred = starred;
+    }
+
+    public String getSecretToken() {
+        return secretToken;
+    }
+
+    public void setSecretToken(String secretToken) {
+        this.secretToken = secretToken;
     }
     //endregion
 }

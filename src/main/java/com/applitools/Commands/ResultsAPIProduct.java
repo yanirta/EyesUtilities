@@ -14,7 +14,7 @@ public abstract class ResultsAPIProduct extends ResultsAPI {
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Parameter(names = {"-d", "-destination"}, description = "Destination folder to save the diff animated images")
-    protected String destination;
+    protected String destination = ".";
 
     public ResultsAPIProduct() {
     }
@@ -26,9 +26,9 @@ public abstract class ResultsAPIProduct extends ResultsAPI {
 
     public void run() throws Exception {
         ResultUrl resultUrl = getUrl();
+        if (destination == null) destination = System.getProperty("user.dir");
         ResultsAPIContext.init(resultUrl, viewKey, new File(destination));
         ResultsAPIContext ctx = ResultsAPIContext.instance();
-        if (destination == null) destination = System.getProperty("user.dir");
         if (resultUrl.getSessionId() != null) {
             //Just one test
             TestInfo testInfo = mapper.readValue(ctx.getTestApiUrl(), TestInfo.class);
