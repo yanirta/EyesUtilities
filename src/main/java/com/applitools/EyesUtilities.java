@@ -48,8 +48,6 @@ public class EyesUtilities {
         command.run();
 
         //TODO Migrate test
-        //TODO analyze scrollable areas
-        //TODO analyze dynamic areas
         //TODO deep search in many batches
         //TODO animated flows
     }
