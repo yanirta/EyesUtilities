@@ -22,9 +22,7 @@ public class EyesUtilities {
             main.run(jc, args);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-
-            jc.usage();
-            //e.printStackTrace();
+            jc.usage(jc.getParsedCommand());
         }
     }
 
@@ -45,6 +43,7 @@ public class EyesUtilities {
         }
 
         Command command = (Command) jc.getCommands().get(jc.getParsedCommand()).getObjects().get(0);
+
         command.run();
 
         //TODO Migrate test
