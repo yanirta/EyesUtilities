@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Build and save animated diffs gif for failing steps")
-public class AnimatedDiffs extends ResultsAPIProduct {
+public class AnimatedDiffs extends ResultsAPIExtract {
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Parameter(names = {"-i", "-interval"}, description = "Transition interval between the images")

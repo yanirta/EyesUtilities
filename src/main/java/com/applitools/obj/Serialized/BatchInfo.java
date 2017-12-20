@@ -40,7 +40,8 @@ public class BatchInfo {
         URL batchUrl = ctx.getBatchAPIurl();
 
         TestInfo[] infos = mapper.readValue(batchUrl, TestInfo[].class);
-        if (infos.length == 0) return new BatchInfo(infos, ctx.getBatchAPPurl().toString());
+        if (infos.length == 0)
+            return new BatchInfo(infos, ctx.getBatchAPPurl().toString()); //Empty batch
 
         BatchInfo bi = mapper.readValue(
                 mapper.writeValueAsString(((HashMap) infos[0].getStartInfo()).get("batchInfo")),

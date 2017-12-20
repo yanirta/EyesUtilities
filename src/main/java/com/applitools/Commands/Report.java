@@ -29,7 +29,7 @@ public class Report extends ResultsAPI {
     public void run() throws Exception {
         templFile = new File(templFileName);
         Velocity.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
-        Velocity.setProperty("file.resource.loader.path", templFile.getParent().toString());
+        Velocity.setProperty("file.resource.loader.path", templFile.getAbsoluteFile().getParent());
         Velocity.init();
         VelocityContext context = createContext();
 

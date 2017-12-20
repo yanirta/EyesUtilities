@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Download test steps images of a specific test")
-public class DownloadImages extends ResultsAPIProduct {
+public class DownloadImages extends ResultsAPIExtract {
 
     @Parameter(names = {"-b"}, description = "Save only baselines")
     private boolean onlyBaselines = false;

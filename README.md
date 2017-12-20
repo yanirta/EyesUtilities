@@ -1,4 +1,4 @@
-# EyesUtilities [ ![Download](https://api.bintray.com/packages/yanirta/generic/EyesUtilities/images/download.svg?version=0.0.9b) ](https://bintray.com/yanirta/generic/EyesUtilities/0.0.9b/link)
+# EyesUtilities [ ![Download](https://api.bintray.com/packages/applitoolseyes/generic/EyesUtilities/images/download.svg)](https://bintray.com/applitoolseyes/generic/download_file?file_path=EyesUtilities.jar)
 Eyes utilities is a Java CLI tool provides extended API features for Applitools Eyes.  
 This tool based on the assumption that you already have tests with Applitools
 and you want to gather more information about your test results via the API.

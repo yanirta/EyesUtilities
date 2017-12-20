@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Download test diff images of a specific test")
-public class DownloadDiffs extends ResultsAPIProduct {
+public class DownloadDiffs extends ResultsAPIExtract {
 
 
     public DownloadDiffs() {

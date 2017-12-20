@@ -10,16 +10,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class ResultsAPIProduct extends ResultsAPI {
+public abstract class ResultsAPIExtract extends ResultsAPI {
     private static ObjectMapper mapper = new ObjectMapper();
 
-    @Parameter(names = {"-d", "-destination"}, description = "Destination folder to save the diff animated images")
+    @Parameter(names = {"-d", "--destination"}, description = "Destination folder to save the diff animated images")
     protected String destination = ".";
-
-    public ResultsAPIProduct() {
+    
+    public ResultsAPIExtract() {
     }
 
-    public ResultsAPIProduct(String resUrl, String viewKey, String destination) {
+    public ResultsAPIExtract(String resUrl, String viewKey, String destination) {
         super(resUrl, viewKey);
         this.destination = destination;
     }
