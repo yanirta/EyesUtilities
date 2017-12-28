@@ -1,15 +1,14 @@
 package com.applitools.obj.Serialized;
 
+import com.applitools.obj.*;
 import com.applitools.obj.Contexts.ResultsAPIContext;
-import com.applitools.obj.FailedStep;
-import com.applitools.obj.ResultUrl;
-import com.applitools.obj.Step;
-import com.applitools.obj.StepResult;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class TestInfo {
     private String modelId;
     private Integer Duration;
     private Boolean isDifferent;
-    private Object Env;
+    private Environment Env;
     private Object appEnvironment;
     private ArrayList<ExpectedStepResult> ExpectedAppOutput;
     private ArrayList<ActualStepResult> ActualAppOutput;
@@ -52,6 +51,9 @@ public class TestInfo {
     private Boolean isStarred;
     private String secretToken;
     //endregion
+
+    @JsonIgnore
+    private PathGenerator pathGenerator;
 
     //region getters/setters
     public String getBaselineEnvId() {
@@ -106,7 +108,7 @@ public class TestInfo {
         return isDifferent;
     }
 
-    public Object getEnv() {
+    public Environment getEnv() {
         return Env;
     }
 
@@ -190,7 +192,7 @@ public class TestInfo {
         isDifferent = different;
     }
 
-    public void setEnv(Object env) {
+    public void setEnv(Environment env) {
         Env = env;
     }
 
@@ -325,8 +327,7 @@ public class TestInfo {
         StepResult[] stepsResults = getStepsResults();
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         ResultUrl ctxUrl = ctx.getUrl();
-        String subpath = String.format("%s/%s", ctxUrl.getBatchId(), getId());
-        File testArtifact = new File(ctx.getArtifactsFolder(), subpath);
+
         for (int i = 0; i < stepsResults.length; ++i) {
             if (stepsResults[i] == StepResult.Failed) {
                 failedSteps.add(
@@ -335,7 +336,7 @@ public class TestInfo {
                                 ExpectedAppOutput.get(i),
                                 ActualAppOutput.get(i),
                                 getId(),
-                                testArtifact));
+                                pathGenerator));
             }
         }
         return failedSteps;
@@ -347,8 +348,7 @@ public class TestInfo {
         StepResult[] stepsResults = getStepsResults();
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         ResultUrl ctxUrl = ctx.getUrl();
-        String subpath = String.format("%s/%s", ctxUrl.getBatchId(), getId());
-        File testArtifact = new File(ctx.getArtifactsFolder(), subpath);
+
         for (int i = 0; i < stepsResults.length; ++i)
             steps.add(
                     new Step(
@@ -356,11 +356,15 @@ public class TestInfo {
                             ExpectedAppOutput.get(i),
                             ActualAppOutput.get(i),
                             getId(),
-                            testArtifact));
+                            pathGenerator));
         return steps;
     }
 
     //region privates
+    private String getBatchName(){
+        return ((HashMap)((HashMap) this.getStartInfo()).get("batchInfo")).get("name").toString();
+    }
+
     private StepResult[] getStepsResults() {
         if (stepsResults != null) return stepsResults;
 
@@ -429,6 +433,21 @@ public class TestInfo {
 
     public void setSecretToken(String secretToken) {
         this.secretToken = secretToken;
+    }
+
+    @JsonIgnore
+    public void setPathGenerator(PathGenerator pathGenerator) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("test_id", getId());
+        params.put("batch_id", getBatchId());
+        params.put("test_name", getScenarioName());
+        params.put("batch_name", getBatchName());
+        params.put("app_name", getAppName());
+        params.put("branch_name", getBranchName());
+        params.put("os", getEnv().getOs());
+        params.put("hostapp", getEnv().getHostingApp());
+        params.put("viewport", getEnv().getDisplaySizeStr());
+        this.pathGenerator = pathGenerator.build(params);
     }
     //endregion
 }

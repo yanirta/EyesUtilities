@@ -2,7 +2,6 @@ package com.applitools.obj.Contexts;
 
 import com.applitools.obj.ResultUrl;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -17,18 +16,16 @@ public class ResultsAPIContext {
     private static ResultsAPIContext context_;
     private final ResultUrl url;
     private final String viewkey;
-    private File artifactsFolder;
 
-    private ResultsAPIContext(ResultUrl url, String viewkey, File artifactsOut) {
+    private ResultsAPIContext(ResultUrl url, String viewkey) {
         this.url = url;
         this.viewkey = viewkey;
-        this.artifactsFolder = artifactsOut;
     }
 
-    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey, File artifactsOut) {
+    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey) {
         if (context_ != null)
             throw new RuntimeException("Invaild call of Context.init(...)");
-        context_ = new ResultsAPIContext(url, viewkey, artifactsOut);
+        context_ = new ResultsAPIContext(url, viewkey);
         return context_;
     }
 
@@ -101,9 +98,5 @@ public class ResultsAPIContext {
                 url.getServerAddress(),
                 imageId,
                 viewkey));
-    }
-
-    public File getArtifactsFolder() {
-        return artifactsFolder;
     }
 }

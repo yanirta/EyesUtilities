@@ -23,7 +23,7 @@ To run in each one of the mode see the following sections.
 This command will generate a set of animated gifs for each failing step inside the provided test.
 The animation will iterate between three states: (a) The expected from the baseline, (b) The actual and (c) The actual with purple diff marks.
 After the execution, the results will be saved, the default location is: `./batchId/testId/`
-![step-2-anidiff](https://user-images.githubusercontent.com/6667420/28462429-df68b3fc-6e23-11e7-89d7-4827acde2769.gif)
+<img src="https://user-images.githubusercontent.com/6667420/28462429-df68b3fc-6e23-11e7-89d7-4827acde2769.gif" width="550">
 
 Syntax:
 > java -jar EyesUtilities.jar anidiffs -k [EntKey] <[optional params]> [ResultUrl]
@@ -31,8 +31,11 @@ Syntax:
     + `-k [EntKey]` - Your Enterprise api read key.
     + `[ResultUrl]` - Applitools test result url to be analyzed.
 + Optional parameters:
-    + `-d [FolderPath]` - Specify output destination path. default: `./batchId/testId/`
     + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
+    + `-d [pathTmpl]` - Specify destination path template.
+    default: 
+        >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
+        + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
 
 ### Download test images
 This command downloads the baseline and the actual images of a test.
@@ -44,9 +47,12 @@ Syntax:
     + `-k [EntKey]` - Your Enterprise api read key.
     + `[ResultUrl]` - Applitools test result url to be analyzed.
  + Optional parameters:   
-     + `-d [FolderPath]` - Specify output destination path. default: `./batchId/testId/`
      + `-a` - Flag to download only actuals
      + `-b` - Flag to download only baselines
+    + `-d [pathTmpl]` - Specify destination path template.
+    default: 
+        >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
+        + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
 
 ### Copy branch
 This command performs branch merging using copy with special flags.
@@ -92,7 +98,7 @@ Syntax:
     + `-t [FilePath]` - Set report template file. Default `./report.teml`
     
 #####Template syntax:
-The engine lies beneath this report generation is based on[Velocity framework]()which widely used in MVC frameworks to implement web-apps.
+The engine lies beneath this report generation is based on [Velocity framework]() which widely used in MVC frameworks to implement web-apps.
 The VTL(Velocity Template Language) syntax reference can be found[here](http://velocity.apache.org/engine/1.7/vtl-reference.html).   
 
 Here is the partial list of parameters that are exposed for usage in template construction:

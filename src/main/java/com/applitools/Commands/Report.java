@@ -1,5 +1,6 @@
 package com.applitools.Commands;
 
+import com.applitools.obj.PathGenerator;
 import com.applitools.obj.Serialized.BatchInfo;
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.beust.jcommander.Parameter;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 
 @Parameters(commandDescription = "Prepare report based on a template")
 
@@ -21,10 +23,12 @@ public class Report extends ResultsAPI {
     @Parameter(names = {"-t", "--template"}, description = "Template file.")
     private String templFileName = "report.templ";
 
-    @Parameter(names = {"-d", "--destination"}, description = "Output folder destination.")
+    @Parameter(names = {"-d", "--destination"}, description = "Output folder+file destination.")
     private String reportoutfile = "report.html";
 
     private File templFile = null;
+
+    private PathGenerator outPathGenerator = new PathGenerator("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
 
     public void run() throws Exception {
         templFile = new File(templFileName);
@@ -59,20 +63,21 @@ public class Report extends ResultsAPI {
         return sw;
     }
 
-    private VelocityContext createContext() throws IOException {
-        File artifacts = new File(
-                new File(reportoutfile)
-                        .getAbsoluteFile()
-                        .getParentFile()
-//                        .toURI()
-//                        .relativize(new File(System.getProperty("user.dir")).toURI())
-                        .getPath()
-                , "/artifacts/");
+    private HashMap<String, String> getSelfPathParams() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("report_root", new File(reportoutfile).getAbsoluteFile().getParentFile().getPath());
+        params.put("user_root", new File(System.getProperty("user.dir")).getAbsolutePath());
+        params.put("workdir_root", new File("").getAbsolutePath());
+        params.put("artifacts", "artifacts");
+        return params;
+    }
 
-        if (!artifacts.exists()) artifacts.mkdirs();
-        ResultsAPIContext ctx = ResultsAPIContext.init(getUrl(), viewKey, artifacts);
+    private VelocityContext createContext() throws IOException {
+        PathGenerator baseGenerator = outPathGenerator.build(getSelfPathParams());
+
+        ResultsAPIContext ctx = ResultsAPIContext.init(getUrl(), viewKey);
         VelocityContext context = new VelocityContext();
-        BatchInfo batchInfo = BatchInfo.get(ctx);
+        BatchInfo batchInfo = BatchInfo.get(ctx, baseGenerator);
         if (batchInfo == null) return null;
         context.internalPut("batch", batchInfo);
         context.internalPut("server_url", getUrl().getServerAddress());

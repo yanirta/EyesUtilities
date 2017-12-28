@@ -12,21 +12,26 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FailedStep extends Step {
     private static final int ANIMATION_TRANSITION_INTERVAL = 1000;
-    private static final String DESTINATION_GIF_TEMPLATE = "Step_%s.gif";
-    private static final String DIFF_FILE_TMPL = "step-%s-diff.png";
+    private static final String DIFF_ARTIFACT_EXT = "png";
+    private static final String ANIDIFF_ARTIFACT_EXT = "gif";
+    private static final String DIFF_ARTIFACT_TYPE = "diff";
 
-    public FailedStep(int i, ExpectedStepResult expected, ActualStepResult actual, String testId, File folder) {
-        super(i, expected, actual, testId, folder);
+    public FailedStep(int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
+        super(i, expected, actual, testId, pathGenerator);
     }
 
     public String getDiff() throws IOException {
-        String outFolder = ensureTargetFolder();
+        ensureTargetFolder();
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL diffImage = ctx.getDiffImageUrl(testId, getIndex());
-        File destination = new File(outFolder, String.format(DIFF_FILE_TMPL, getIndex()));
+        Map<String, String> params = getPathParams();
+        params.put("file_ext", DIFF_ARTIFACT_EXT);
+        params.put("artifact_type", DIFF_ARTIFACT_TYPE);
+        File destination = pathGenerator.build(params).generateFile();
         Utils.saveImage(diffImage.toString(), destination.toString());
         return destination.toString();
     }
@@ -64,12 +69,17 @@ public class FailedStep extends Step {
     }
 
     private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
-        String outFolder = ensureTargetFolder();
+        ensureTargetFolder();
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL expectedImageURL = ctx.getImageUrl(expectedImageId);
         URL actualImageURL = ctx.getImageUrl(actualImageId);
         URL diffImageURL = ctx.getDiffImageUrl(testId, getIndex());
-        File destination = new File(outFolder, String.format(DESTINATION_GIF_TEMPLATE, getIndex()));
+
+        Map<String, String> params = getPathParams();
+        params.put("file_ext", ANIDIFF_ARTIFACT_EXT);
+        params.put("artifact_type", DIFF_ARTIFACT_TYPE);
+        File destination = pathGenerator.build(params).generateFile();
+
         if (skipIfExists && destination.exists()) return destination.toString();
 
         saveAnimatedDiff(
@@ -80,7 +90,7 @@ public class FailedStep extends Step {
                 transitionInterval
         );
 
-        return destination.toString(); //TODO reletivize
+        return destination.toString(); //TODO relativize
     }
 
 

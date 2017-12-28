@@ -1,6 +1,8 @@
 package com.applitools.obj.Serialized;
 
 import com.applitools.obj.Contexts.ResultsAPIContext;
+import com.applitools.obj.PathGenerator;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -15,6 +17,7 @@ public class BatchInfo {
 
     private String name;
     private String id;
+    private String batchId;
     private String startedAt;
     private int testsNew = 0;
     private int testsPassed = 0;
@@ -28,6 +31,9 @@ public class BatchInfo {
 
     private String url;
 
+    //JSON Ignored
+    private PathGenerator pathGenerator;
+
     private BatchInfo() {
     }
 
@@ -36,7 +42,7 @@ public class BatchInfo {
         this.url = url;
     }
 
-    public static BatchInfo get(ResultsAPIContext ctx) throws IOException {
+    public static BatchInfo get(ResultsAPIContext ctx, PathGenerator pathGenerator) throws IOException {
         URL batchUrl = ctx.getBatchAPIurl();
 
         TestInfo[] infos = mapper.readValue(batchUrl, TestInfo[].class);
@@ -49,6 +55,8 @@ public class BatchInfo {
 
         bi.tests = infos;
         bi.url = ctx.getBatchAPPurl().toString();
+        bi.batchId = infos[0].getBatchId();
+        bi.setPathGenerator(pathGenerator);
         bi.calculateBatchMetrics();
         return bi;
     }
@@ -178,5 +186,13 @@ public class BatchInfo {
 
     public int getTotalBaselineSteps() {
         return totalBaselineSteps;
+    }
+
+    public void setPathGenerator(PathGenerator pathGenerator) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("batch_id", batchId);
+        params.put("batch_name", getName());
+        this.pathGenerator = pathGenerator.build(params);
+        for (TestInfo ti : tests) ti.setPathGenerator(this.pathGenerator);
     }
 }
