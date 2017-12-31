@@ -2,11 +2,16 @@ package com.applitools.obj.Serialized;
 
 import com.applitools.obj.*;
 import com.applitools.obj.Contexts.ResultsAPIContext;
+import com.applitools.utils.Utils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -344,12 +349,9 @@ public class TestInfo {
 
     public List<Step> getSteps() {
         LinkedList<Step> steps = new LinkedList();
+        int count = Math.max(ExpectedAppOutput.size(), ActualAppOutput.size());
 
-        StepResult[] stepsResults = getStepsResults();
-        ResultsAPIContext ctx = ResultsAPIContext.instance();
-        ResultUrl ctxUrl = ctx.getUrl();
-
-        for (int i = 0; i < stepsResults.length; ++i)
+        for (int i = 0; i < count; ++i)
             steps.add(
                     new Step(
                             i + 1,
@@ -361,26 +363,19 @@ public class TestInfo {
     }
 
     //region privates
-    private String getBatchName(){
-        return ((HashMap)((HashMap) this.getStartInfo()).get("batchInfo")).get("name").toString();
+    private String getBatchName() {
+        return ((HashMap) ((HashMap) this.getStartInfo()).get("batchInfo")).get("name").toString();
     }
 
     private StepResult[] getStepsResults() {
         if (stepsResults != null) return stepsResults;
 
-        int steps = Math.max(ExpectedAppOutput.size(), ActualAppOutput.size());
-        stepsResults = new StepResult[steps];
+        List<Step> steps = getSteps();
+        stepsResults = new StepResult[steps.size()];
 
-        for (int i = 0; i < steps; i++) {
-            if (ExpectedAppOutput.get(i) == null) {
-                stepsResults[i] = StepResult.New;
-            } else if (ActualAppOutput.get(i) == null) {
-                stepsResults[i] = StepResult.Missing;
-            } else if (ActualAppOutput.get(i).getIsMatching()) {
-                stepsResults[i] = StepResult.Passed;
-            } else {
-                stepsResults[i] = StepResult.Failed;
-            }
+        int i = 0;
+        for (Step step : steps) {
+            stepsResults[i++] = step.result();
         }
 
         return stepsResults;
@@ -448,6 +443,25 @@ public class TestInfo {
         params.put("hostapp", getEnv().getHostingApp());
         params.put("viewport", getEnv().getDisplaySizeStr());
         this.pathGenerator = pathGenerator.build(params);
+    }
+
+    private static final String PLAYBACK_FILE_TMPL = "test_playback.gif";
+
+    public String getPlaybackAnimation(int interval, boolean withDiffs) throws IOException {
+        pathGenerator.ensureTargetFolder();
+
+        List<BufferedImage> images = new ArrayList<BufferedImage>(ActualAppOutput.size());
+        for (Step step : getSteps()) {
+            if (step.result() != StepResult.Missing)
+                if (withDiffs && step.result() == StepResult.Failed)
+                    images.add(ImageIO.read(step.getDiffImageUrl()));
+                else
+                    images.add(ImageIO.read(step.getActualImageUrl()));
+        }
+        File file = pathGenerator.generatePath(PLAYBACK_FILE_TMPL);
+        Utils.createAnimatedGif(images, file, interval);
+
+        return file.getPath();
     }
     //endregion
 }

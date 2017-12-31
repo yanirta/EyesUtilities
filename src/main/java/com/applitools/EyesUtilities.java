@@ -12,6 +12,7 @@ public class EyesUtilities {
     Report report = new Report();
     CopyBranch copyBranch = new CopyBranch();
     AnimatedDiffs animatedDiffs = new AnimatedDiffs();
+    Playback playback = new Playback();
 
     public static void main(String[] args) {
         EyesUtilities main = new EyesUtilities();
@@ -34,6 +35,7 @@ public class EyesUtilities {
         jc.addCommand("report", report);
         jc.addCommand("copybranch", copyBranch);
         jc.addCommand("anidiffs", animatedDiffs);
+        jc.addCommand("playback", playback);
         jc.parse(args);
 
         String commandstr = jc.getParsedCommand();

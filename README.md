@@ -37,8 +37,39 @@ Syntax:
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
 
+### Generate test playback
+Generates one unified animated gif with all the actual steps of a test.
+
+Syntax:
+> java -jar EyesUtilities.jar playback -k [EntKey] <[optional params]> [ResultUrl]
++ Required parameters:
+    + `-k [EntKey]` - Your Enterprise api read key.
+    + `[ResultUrl]` - Applitools test result url to be analyzed.
++ Optional parameters:
+    + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
+    + `-d [pathTmpl]` - Specify destination path template.
+    default: 
+        >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
+        + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
+    + `-m` - A Flag, Sets 'on' diff marks if a step is different from it's expected baseline.
+    
+### Download test diffs
+Downloads the images of the failed steps with diff marks on them.
+
+Syntax:
+> java -jar EyesUtilities.jar diffs -k [EntKey] <[optional params]> [ResultUrl]
++ Required parameters:
+    + `-k [EntKey]` - Your Enterprise api read key.
+    + `[ResultUrl]` - Applitools test result url to be analyzed.
++ Optional parameters:
+    + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
+    + `-d [pathTmpl]` - Specify destination path template.
+    default: 
+        >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
+        + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
+
 ### Download test images
-This command downloads the baseline and the actual images of a test.
+Downloads the baseline and the actual images of a test.
 
 Syntax:
 > java -jar EyesUtilities.jar images -k [EntKey] <[optional params]> [ResultUrl]
@@ -47,8 +78,8 @@ Syntax:
     + `-k [EntKey]` - Your Enterprise api read key.
     + `[ResultUrl]` - Applitools test result url to be analyzed.
  + Optional parameters:   
-     + `-a` - Flag to download only actuals
-     + `-b` - Flag to download only baselines
+    + `-a` - Flag to download only actuals
+    + `-b` - Flag to download only baselines
     + `-d [pathTmpl]` - Specify destination path template.
     default: 
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}

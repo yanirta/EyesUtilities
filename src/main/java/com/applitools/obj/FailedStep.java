@@ -25,13 +25,15 @@ public class FailedStep extends Step {
     }
 
     public String getDiff() throws IOException {
-        ensureTargetFolder();
+
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL diffImage = ctx.getDiffImageUrl(testId, getIndex());
         Map<String, String> params = getPathParams();
         params.put("file_ext", DIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
         File destination = pathGenerator.build(params).generateFile();
+        pathGenerator.ensureTargetFolder();
+
         Utils.saveImage(diffImage.toString(), destination.toString());
         return destination.toString();
     }
@@ -69,7 +71,7 @@ public class FailedStep extends Step {
     }
 
     private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
-        ensureTargetFolder();
+
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL expectedImageURL = ctx.getImageUrl(expectedImageId);
         URL actualImageURL = ctx.getImageUrl(actualImageId);
@@ -79,6 +81,7 @@ public class FailedStep extends Step {
         params.put("file_ext", ANIDIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
         File destination = pathGenerator.build(params).generateFile();
+        pathGenerator.ensureTargetFolder();
 
         if (skipIfExists && destination.exists()) return destination.toString();
 

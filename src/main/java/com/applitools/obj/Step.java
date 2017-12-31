@@ -7,6 +7,7 @@ import com.applitools.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -39,11 +40,31 @@ public class Step {
         return saveResourceById(actual.getImageId(), ACTUAL_ARTIFACT_TYPE);
     }
 
+    public StepResult result() {
+        if (expected == null) {
+            return StepResult.New;
+        } else if (actual == null) {
+            return StepResult.Missing;
+        } else if (actual.getIsMatching()) {
+            return StepResult.Passed;
+        } else {
+            return StepResult.Failed;
+        }
+    }
+
+    public URL getActualImageUrl() throws MalformedURLException {
+        return ResultsAPIContext.instance().getImageUrl(actual.getImageId());
+    }
+
+    public URL getDiffImageUrl() throws MalformedURLException {
+        return ResultsAPIContext.instance().getDiffImageUrl(testId, index);
+    }
+
     private String saveResourceById(String imageId, String artifact_type) throws IOException {
-        ensureTargetFolder();
         Map<String, String> params = getPathParams();
-        params.put("artifact_type",artifact_type);
+        params.put("artifact_type", artifact_type);
         File destination = pathGenerator.build(params).generateFile();
+        pathGenerator.ensureTargetFolder();
         URL imageResource = ResultsAPIContext.instance().getImageResource(imageId);
         Utils.saveImage(imageResource.toString(), destination.toString());
         return destination.toString();
@@ -61,12 +82,5 @@ public class Step {
         return index;
     }
 
-    protected void ensureTargetFolder() {
-        if (pathGenerator == null)
-            throw new InvalidParameterException("pathGenerator is null");
-        File outFolder = pathGenerator.generatePath();
-        if (!outFolder.exists() && !outFolder.mkdirs())
-            throw new RuntimeException(
-                    String.format("Unable to create output folder for path: %s", outFolder.toString()));
-    }
+
 }

@@ -4,6 +4,7 @@ import javafx.scene.shape.Path;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.security.InvalidParameterException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,5 +58,12 @@ public class PathGenerator {
     public File generateFile() {
         if (StringUtils.isEmpty(file_template)) throw new RuntimeException("file_template is empty");
         return new File(path_template, file_template);
+    }
+
+    public void ensureTargetFolder() {
+        File outFolder = generatePath();
+        if (!outFolder.exists() && !outFolder.mkdirs())
+            throw new RuntimeException(
+                    String.format("Unable to create output folder for path: %s", outFolder.toString()));
     }
 }
