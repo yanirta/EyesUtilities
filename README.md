@@ -39,7 +39,7 @@ Syntax:
 
 ### Generate test playback
 Generates one unified animated gif with all the actual steps of a test.
-
+<img src="https://user-images.githubusercontent.com/6667420/34461889-b818022a-ee3f-11e7-88d4-153124790462.gif" width="550">
 Syntax:
 > java -jar EyesUtilities.jar playback -k [EntKey] <[optional params]> [ResultUrl]
 + Required parameters:
