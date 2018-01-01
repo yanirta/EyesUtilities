@@ -39,7 +39,7 @@ Syntax:
 
 ### Generate test playback
 Generates one unified animated gif with all the actual steps of a test.  
-<img src="https://user-images.githubusercontent.com/6667420/34461889-b818022a-ee3f-11e7-88d4-153124790462.gif" width="550">
+<img src="https://user-images.githubusercontent.com/6667420/34461889-b818022a-ee3f-11e7-88d4-153124790462.gif" width="550">  
 
 Syntax:
 > java -jar EyesUtilities.jar playback -k [EntKey] <[optional params]> [ResultUrl]
@@ -91,7 +91,7 @@ Syntax:
 This command performs branch merging using copy with special flags.
 
 Syntax:
-> java -jar copybranch -k [BranchKey] -s [SourceBranch] -a [AppName] <[optional params]> 
+> java -jar EyesUtilities.jar copybranch -k [BranchKey] -s [SourceBranch] -a [AppName] <[optional params]> 
 
 + Required parameters:
     + `-k [BranchKey]` - Your enterprise branch management api key.
@@ -103,21 +103,12 @@ Syntax:
     + `-all` - Copy all including unchanged steps.
     + `-d` - Delete the source branch after successful copy.
     
-### Print test details
-This command prints the details of a given test
-
-Syntax:
-> java -jar EyesUtilities.jar details -k [EntKey] <[optional params]> [ResultUrl]
-+ Required parameters:
-    + `-k [EntKey]` - Your Enterprise api read key.
-    + `[ResultUrl]` - Applitools test result url to be analyzed.
-+ Optional parameters:
-    + `-s` - Print steps details
-    
 ### Generating batch Report (Beta)
 This command will generate an offline report of a provided applitools results url,
 based on a provided template.
 The default name and the location of the template is `./report.teml`.
+
+<img src="https://user-images.githubusercontent.com/6667420/34467334-234b0e4a-eef7-11e7-925b-85ec5224e883.png"  width="550">  
 
 Syntax:
 > java -jar EyesUtilities.jar report -k [EntKey] <[optional params]> [ResultUrl]
