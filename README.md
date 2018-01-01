@@ -22,7 +22,7 @@ To run in each one of the mode see the following sections.
 ### Generate steps animation
 This command will generate a set of animated gifs for each failing step inside the provided test.
 The animation will iterate between three states: (a) The expected from the baseline, (b) The actual and (c) The actual with purple diff marks.
-After the execution, the results will be saved, the default location is: `./batchId/testId/`
+After the execution, the results will be saved, the default location is: `{workdir_root}/Artifacts/{batch_id}/{test_id}/`  
 <img src="https://user-images.githubusercontent.com/6667420/28462429-df68b3fc-6e23-11e7-89d7-4827acde2769.gif" width="550">  
 
 Syntax:
@@ -118,7 +118,7 @@ Syntax:
     + `[ResultUrl]` - Applitools test result url to be analyzed.
 + Optional parameters:
     + `-d [FolderPath]` - Set custom report output destination. Default: `'.'`
-    + `-t [FilePath]` - Set report template file. Default `./report.teml`
+    + `-t [FilePath]` - Set report template file. Default `./report.templ`
     
 #####Template syntax:
 The engine lies beneath this report generation is based on [Velocity framework]() which widely used in MVC frameworks to implement web-apps.
@@ -139,9 +139,7 @@ Here is the partial list of parameters that are exposed for usage in template co
     + `$batch.getPassedRate()` - 100% based tests in batch pass rate
     + `$batch.getFailedRate()` - 100% based tests in batch fail rate
     + `$batch.getNewRate()` - 100% based tests in batch new rate
-    + `$batch.getStatus()` - Calculated test status within Passed/Failed/Unresolved
-    + `$batch.getIsDefaultStatus()` - Returns boolean status wether the appearing calculated status is the default one or was been overridden.
-+ `#foreach($test in $batch.tests)` - While `$batch.tests` is list of contained tests objects
+  + `#foreach($test in $batch.tests)` - While `$batch.tests` is list of contained tests objects
     + `$test.scenarioName` - The test name
     + `$test.getUrl()` - The url to the test
     + `$test.TotalActualSteps()` - The count of the total steps that were captured in the test
@@ -149,6 +147,9 @@ Here is the partial list of parameters that are exposed for usage in template co
     + `$test.FailedCount()` - The count of the failed steps in test
     + `$test.NewCount()` - The count of the new steps in test
     + `$test.MissingCount()` - The count of the passed steps in test
+    + `$test.getStatus()` - Calculated test status within Passed/Failed/Unresolved
+    + `$test.getIsDefaultStatus()` - Returns boolean status wether the appearing calculated status is the default one or was been overridden.
+
     + `#foreach($step in $test.getFailedSteps())` - While `$test.getFailedSteps()` is the list of contained failed steps objects
         + `$step.getAnimatedThumbprints()` - Downloads step animated thumbprint and returns file's relative path.
         + `$step.getExpectedImage()` - Downloads step baseline (expected) image and returns file's relative path.
