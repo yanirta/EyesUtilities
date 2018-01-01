@@ -23,7 +23,7 @@ To run in each one of the mode see the following sections.
 This command will generate a set of animated gifs for each failing step inside the provided test.
 The animation will iterate between three states: (a) The expected from the baseline, (b) The actual and (c) The actual with purple diff marks.
 After the execution, the results will be saved, the default location is: `./batchId/testId/`
-<img src="https://user-images.githubusercontent.com/6667420/28462429-df68b3fc-6e23-11e7-89d7-4827acde2769.gif" width="550">
+<img src="https://user-images.githubusercontent.com/6667420/28462429-df68b3fc-6e23-11e7-89d7-4827acde2769.gif" width="550">  
 
 Syntax:
 > java -jar EyesUtilities.jar anidiffs -k [EntKey] <[optional params]> [ResultUrl]
@@ -38,8 +38,9 @@ Syntax:
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
 
 ### Generate test playback
-Generates one unified animated gif with all the actual steps of a test.
+Generates one unified animated gif with all the actual steps of a test.  
 <img src="https://user-images.githubusercontent.com/6667420/34461889-b818022a-ee3f-11e7-88d4-153124790462.gif" width="550">
+
 Syntax:
 > java -jar EyesUtilities.jar playback -k [EntKey] <[optional params]> [ResultUrl]
 + Required parameters:
@@ -58,6 +59,7 @@ Downloads the images of the failed steps with diff marks on them.
 
 Syntax:
 > java -jar EyesUtilities.jar diffs -k [EntKey] <[optional params]> [ResultUrl]
+
 + Required parameters:
     + `-k [EntKey]` - Your Enterprise api read key.
     + `[ResultUrl]` - Applitools test result url to be analyzed.
@@ -113,7 +115,6 @@ Syntax:
     + `-s` - Print steps details
     
 ### Generating batch Report (Beta)
-
 This command will generate an offline report of a provided applitools results url,
 based on a provided template.
 The default name and the location of the template is `./report.teml`.
@@ -147,6 +148,8 @@ Here is the partial list of parameters that are exposed for usage in template co
     + `$batch.getPassedRate()` - 100% based tests in batch pass rate
     + `$batch.getFailedRate()` - 100% based tests in batch fail rate
     + `$batch.getNewRate()` - 100% based tests in batch new rate
+    + `$batch.getStatus()` - Calculated test status within Passed/Failed/Unresolved
+    + `$batch.getIsDefaultStatus()` - Returns boolean status wether the appearing calculated status is the default one or was been overridden.
 + `#foreach($test in $batch.tests)` - While `$batch.tests` is list of contained tests objects
     + `$test.scenarioName` - The test name
     + `$test.getUrl()` - The url to the test

@@ -144,16 +144,17 @@
                         #set($i = 0)
                         #foreach($test in $batch.tests)
                             #set($i = $i + 1)
-                            #if ($test.getIsNew())
-                                #set($class = "label-info")
-                            #elseif ($test.getIsDifferent())
-                                #set($class = "label-danger")
-                            #else
+                            #set($status = $test.getStatus())
+                            #if ($status == "Unresolved")
+                                #set($class = "label-warning")
+                            #elseif ($status == "Passed")
                                 #set($class = "label-success")
+                            #else
+                                #set($class = "label-danger")
                         #end
                             <tr data-toggle="collapse" class="accordion-toggle" data-target="#diffs$i">
                                 <td>$i</td>
-                                <td><h5><span class="label $class">$test.Result()</span></h5></td>
+                                <td><h5><span class="label $class">$test.getStatus()</span></h5></td>
                                 <td><a href="$test.getUrl()steps/1"> $test.scenarioName </a></td>
                                 <td>$test.TotalActualSteps()</td>
                                 <td>$test.FailedCount()</td>

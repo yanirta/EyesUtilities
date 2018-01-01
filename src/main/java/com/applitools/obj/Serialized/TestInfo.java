@@ -22,6 +22,10 @@ public class TestInfo {
 
     //region Fields
     private String Id;
+    private Boolean isAborted;
+    private Boolean isDefaultStatus;
+    private String Status;
+    private Object savedTo;
     private String runningSessionId;
     private String legacySessionId;
     private Object startInfo;
@@ -61,6 +65,38 @@ public class TestInfo {
     private PathGenerator pathGenerator;
 
     //region getters/setters
+    public Object getSavedTo() {
+        return savedTo;
+    }
+
+    public void setSavedTo(Object savedTo) {
+        this.savedTo = savedTo;
+    }
+
+    public Boolean getIsDefaultStatus() {
+        return isDefaultStatus;
+    }
+
+    public void setIsDefaultStatus(Boolean defaultStatus) {
+        isDefaultStatus = defaultStatus;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
+    }
+
+    public Boolean getIsAborted() {
+        return isAborted;
+    }
+
+    public void setIsAborted(Boolean aborted) {
+        isAborted = aborted;
+    }
+
     public String getBaselineEnvId() {
         return baselineEnvId;
     }
@@ -462,6 +498,14 @@ public class TestInfo {
         Utils.createAnimatedGif(images, file, interval);
 
         return file.getPath();
+    }
+
+    public boolean isAborted() {
+        return isAborted;
+    }
+
+    public void setAborted(boolean aborted) {
+        isAborted = aborted;
     }
     //endregion
 }
