@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +23,7 @@ public class TestInfo {
     private String Id;
     private Boolean isAborted;
     private Boolean isDefaultStatus;
-    private String Status;
+    private TestStatus Status;
     private Object savedTo;
     private String runningSessionId;
     private String legacySessionId;
@@ -81,11 +80,11 @@ public class TestInfo {
         isDefaultStatus = defaultStatus;
     }
 
-    public String getStatus() {
+    public TestStatus getStatus() {
         return Status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TestStatus status) {
         Status = status;
     }
 
@@ -312,6 +311,7 @@ public class TestInfo {
 
     public int TotalBaselineSteps() {
         int count = 0;
+        if (ExpectedAppOutput == null) return count;
         for (ExpectedStepResult step : ExpectedAppOutput)
             if (step != null) ++count;
         return count;
@@ -319,6 +319,7 @@ public class TestInfo {
 
     public int TotalActualSteps() {
         int count = 0;
+        if (ActualAppOutput == null) return count;
         for (ActualStepResult step : ActualAppOutput)
             if (step != null) ++count;
         return count;
@@ -336,8 +337,8 @@ public class TestInfo {
         return count(StepResult.Passed);
     }
 
-    public int FailedCount() {
-        return count(StepResult.Failed);
+    public int MismatchingCount() {
+        return count(StepResult.Mismatching);
     }
 
     public String getBaselineId() {
@@ -358,7 +359,7 @@ public class TestInfo {
 
     public String Result() {
         if (getIsNew()) return "New";
-        else if (getIsDifferent()) return "Failed";
+        else if (getIsDifferent()) return "Mismatching";
         else return "Passed";
     }
 
@@ -370,7 +371,7 @@ public class TestInfo {
         ResultUrl ctxUrl = ctx.getUrl();
 
         for (int i = 0; i < stepsResults.length; ++i) {
-            if (stepsResults[i] == StepResult.Failed) {
+            if (stepsResults[i] == StepResult.Mismatching) {
                 failedSteps.add(
                         new FailedStep(
                                 i + 1,
@@ -385,6 +386,8 @@ public class TestInfo {
 
     public List<Step> getSteps() {
         LinkedList<Step> steps = new LinkedList();
+        if (ExpectedAppOutput == null || ActualAppOutput == null) return steps;
+
         int count = Math.max(ExpectedAppOutput.size(), ActualAppOutput.size());
 
         for (int i = 0; i < count; ++i)
@@ -489,7 +492,7 @@ public class TestInfo {
         List<BufferedImage> images = new ArrayList<BufferedImage>(ActualAppOutput.size());
         for (Step step : getSteps()) {
             if (step.result() != StepResult.Missing)
-                if (withDiffs && step.result() == StepResult.Failed)
+                if (withDiffs && step.result() == StepResult.Mismatching)
                     images.add(ImageIO.read(step.getDiffImageUrl()));
                 else
                     images.add(ImageIO.read(step.getActualImageUrl()));

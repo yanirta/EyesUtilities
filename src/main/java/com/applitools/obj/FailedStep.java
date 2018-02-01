@@ -71,7 +71,6 @@ public class FailedStep extends Step {
     }
 
     private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
-
         ResultsAPIContext ctx = ResultsAPIContext.instance();
         URL expectedImageURL = ctx.getImageUrl(expectedImageId);
         URL actualImageURL = ctx.getImageUrl(actualImageId);

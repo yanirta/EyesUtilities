@@ -100,4 +100,13 @@ public class Utils {
         }
         return max;
     }
+
+    public static String toFolderName(String name) {
+        String foldername = new String(name);
+        foldername = foldername.replaceAll("https?:", "");
+        foldername = foldername.replaceAll("www", "");
+        foldername = foldername.replaceAll("/", "");
+        foldername = foldername.replaceAll("\\.", "_");
+        return foldername;
+    }
 }

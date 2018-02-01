@@ -2,7 +2,6 @@ package com.applitools.obj.Serialized;
 
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.PathGenerator;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -21,18 +20,26 @@ public class BatchInfo {
     private String startedAt;
     private int testsNew = 0;
     private int testsPassed = 0;
-    private int testsFailed = 0;
+    private int testsUnresolved = 0;
+    private int testsMismatched = 0;
     private int testsRunning = 0;
     private int stepsNew = 0;
     private int stepsPassed = 0;
-    private int stepsFailed = 0;
+    private int stepsMismatched = 0;
     private int stepsMissing = 0;
     private int totalBaselineSteps = 0;
+    private int testsStatusPassed = 0;
+    private int testsStatusUnresolved = 0;
+    private int testsStatusRunning = 0;
+    private int testsStatusFailed = 0;
+    private int testsStatusAborted = 0;
 
     private String url;
 
     //JSON Ignored
     private PathGenerator pathGenerator;
+
+
 
     private BatchInfo() {
     }
@@ -65,12 +72,29 @@ public class BatchInfo {
         for (TestInfo test : tests) {
             if (!test.getState().equalsIgnoreCase("Completed")) ++testsRunning;
             else if (test.getIsNew()) ++testsNew;
-            else if (test.getIsDifferent()) ++testsFailed;
+            else if (test.getIsDifferent()) ++testsMismatched;
             else ++testsPassed;
 
+            switch (test.getStatus()) {
+                case Passed:
+                    ++testsStatusPassed;
+                    break;
+                case Failed:
+                    ++testsStatusFailed;
+                    break;
+                case Unresolved:
+                    ++testsStatusUnresolved;
+                    break;
+                case Running:
+                    ++testsStatusRunning;
+                    break;
+                case Aborted:
+                    ++testsStatusAborted;
+                    break;
+            }
             stepsNew += test.NewCount();
             stepsPassed += test.PassedCount();
-            stepsFailed += test.FailedCount();
+            stepsMismatched += test.MismatchingCount();
             stepsMissing += test.MissingCount();
             totalBaselineSteps += test.TotalBaselineSteps();
         }
@@ -128,12 +152,16 @@ public class BatchInfo {
         this.testsPassed = testsPassed;
     }
 
-    public int getTestsFailed() {
-        return testsFailed;
+    public int getTestsMismatched() {
+        return testsMismatched;
     }
 
-    public void setTestsFailed(int testsFailed) {
-        this.testsFailed = testsFailed;
+    public void setTestsMismatched(int testsMismatched) {
+        this.testsMismatched = testsMismatched;
+    }
+
+    public int getTestsUnresolved() {
+        return testsUnresolved;
     }
 
     public int getTestsRunning() {
@@ -168,12 +196,12 @@ public class BatchInfo {
         return 100 * ((double) stepsPassed / totalBaselineSteps);
     }
 
-    public int getStepsFailed() {
-        return stepsFailed;
+    public int getStepsMismatched() {
+        return stepsMismatched;
     }
 
-    public double getFailedRate() {
-        return 100 * ((double) stepsFailed / totalBaselineSteps);
+    public double getMismatchedRate() {
+        return 100 * ((double) stepsMismatched / totalBaselineSteps);
     }
 
     public int getStepsMissing() {
@@ -194,5 +222,25 @@ public class BatchInfo {
         params.put("batch_name", getName());
         this.pathGenerator = pathGenerator.build(params);
         for (TestInfo ti : tests) ti.setPathGenerator(this.pathGenerator);
+    }
+
+    public int getTestsStatusPassed() {
+        return testsStatusPassed;
+    }
+
+    public int getTestsStatusUnresolved() {
+        return testsStatusUnresolved;
+    }
+
+    public int getTestsStatusRunning() {
+        return testsStatusRunning;
+    }
+
+    public int getTestsStatusFailed() {
+        return testsStatusFailed;
+    }
+
+    public int getTestsStatusAborted() {
+        return testsStatusAborted;
     }
 }

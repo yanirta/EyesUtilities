@@ -31,16 +31,15 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
         ResultUrl resultUrl = getUrl();
         ResultsAPIContext.init(resultUrl, viewKey);
         ResultsAPIContext ctx = ResultsAPIContext.instance();
+        PathGenerator generator = new PathGenerator(destination).build(getPathParams());
         if (resultUrl.getSessionId() != null) {
             //Just one test
             TestInfo testInfo = mapper.readValue(ctx.getTestApiUrl(), TestInfo.class);
-            PathGenerator generator = new PathGenerator(destination);
-            Map<String, String> params = getPathParams();
-            testInfo.setPathGenerator(generator.build(params));
+            testInfo.setPathGenerator(generator);
             runPerTest(testInfo);
         } else if (resultUrl.getBatchId() != null) {
             //Url contains batch
-            BatchInfo bi = BatchInfo.get(ctx, new PathGenerator(destination));
+            BatchInfo bi = BatchInfo.get(ctx, generator);
             TestInfo[] tests = bi.getTests();
             int i = 1;
             int total = bi.getTotalTests();

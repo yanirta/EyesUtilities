@@ -39,8 +39,9 @@
                         <thead>
                             <tr>
                                 <th> </th>
-                                <th>Failed</th>
                                 <th>Passed</th>
+                                <th>Unresolved</th>
+                                <th>Mismatched</th>
                                 <th>New</th>
                                 <th>Total</th>
                             </tr>
@@ -48,23 +49,26 @@
                         <tbody>
                             <tr>
                                 <td>Tests</td>
-                                <td>$batch.testsFailed</td>
-                                <td>$batch.testsPassed</td>
-                                <td>$batch.testsNew</td>
-                                <td>$batch.getTotalTests()</td>
+                                <td>$batch.testsStatusPassed</td>
+                                <th>$batch.testsStatusUnresolved</th>
+                                <td>$batch.testsStatusFailed</td>
+                                <td> N/A </td>
+                                <td>$batch.TotalTests</td>
                             </tr>
                             <tr>
                                 <td>Steps</td>
-                                <td>$batch.getStepsFailed()</td>
-                                <td>$batch.getStepsPassed()</td>
-                                <td>$batch.getStepsNew()</td>
-                                <td>$batch.getTotalBaselineSteps()</td>
+                                <td>$batch.StepsPassed</td>
+                                <th> N/A</th>
+                                <td>$batch.StepsMismatched</td>
+                                <th>$batch.StepsNew </th>
+                                <td>$batch.TotalBaselineSteps</td>
                             </tr>
                             <tr>
                                 <td>% Steps</td>
-                                <td>$batch.getFailedRate()%</td>
-                                <td>$batch.getPassedRate()%</td>
-                                <td>$batch.getNewRate()%</td>
+                                <td>$batch.PassedRate%</td>
+                                <th>N/A</th>
+                                <td>$batch.MismatchedRate%</td>
+                                <th>$batch.NewRate </th>
                                 <td>-</td>
                             </tr>
                         </tbody>
@@ -87,16 +91,16 @@
                         function drawChart() {
                           var tests = google.visualization.arrayToDataTable([
                           ['Item', 'Count'],
-                          ['Failed', $batch.testsFailed],
-                          ['Passed', $batch.testsPassed],
-                          ['New', $batch.testsNew]
+                          ['Failed', $batch.testsStatusFailed],
+                          ['Passed', $batch.testsStatusPassed],
+                          ['Unresolved', $batch.testsStatusUnresolved]
                         ]);
 
                         var steps = google.visualization.arrayToDataTable([
                           ['Item', 'Count'],
-                          ['Failed', $batch.getStepsFailed()],
-                          ['Passed', $batch.getStepsPassed()],
-                          ['New', $batch.getStepsNew()]
+                          ['Failed', $batch.StepsMismatched],
+                          ['Passed', $batch.StepsPassed],
+                          ['New', $batch.StepsNew]
                         ]);
 
                           // Optional; add a title and set the width and height of the chart
@@ -106,7 +110,7 @@
                             slices: {
                                     0: { color: 'red' },
                                     1: { color: 'green' },
-                                    2: { color: 'blue' }
+                                    2: { color: 'orange' }
                                 }
                             };
                           var testsChart = new google.visualization.PieChart(document.getElementById('tests-chart'));
@@ -134,7 +138,7 @@
                                 <th>Status</th>
                                 <th>Name</th>
                                 <th>#Steps</th>
-                                <th>Failed</th>
+                                <th>Mismatched</th>
                                 <th>Passed</th>
                                 <th>New</th>
                                 <th>Missing</th>
@@ -149,6 +153,8 @@
                                 #set($class = "label-warning")
                             #elseif ($status == "Passed")
                                 #set($class = "label-success")
+                            #elseif ($status == "Running")
+                                #set($class = "label-primary")
                             #else
                                 #set($class = "label-danger")
                         #end
@@ -157,7 +163,7 @@
                                 <td><h5><span class="label $class">$test.getStatus()</span></h5></td>
                                 <td><a href="$test.getUrl()steps/1"> $test.scenarioName </a></td>
                                 <td>$test.TotalActualSteps()</td>
-                                <td>$test.FailedCount()</td>
+                                <td>$test.MismatchingCount()</td>
                                 <td>$test.PassedCount()</td>
                                 <td>$test.NewCount()</td>
                                 <td>$test.MissingCount()</td>

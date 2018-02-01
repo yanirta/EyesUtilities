@@ -122,23 +122,30 @@ Syntax:
     
 #####Template syntax:
 The engine lies beneath this report generation is based on [Velocity framework]() which widely used in MVC frameworks to implement web-apps.
-The VTL(Velocity Template Language) syntax reference can be found[here](http://velocity.apache.org/engine/1.7/vtl-reference.html).   
+The VTL(Velocity Template Language) syntax reference can be found [here](http://velocity.apache.org/engine/1.7/vtl-reference.html).   
 
 Here is the partial list of parameters that are exposed for usage in template construction:
 + `$batch` - The object that contains all the tests and batch level data.
     + `$batch.name` - The name of the batch
     + `$batch.id` - The id of the batch
     + `$batch.startedAt` - The started date of the batch
+    ###### Test execution results:
     + `$batch.testsPassed` - The count of passed tests
-    + `$batch.testsFailed` - The count of failed tests
+    + `$batch.testsMismatched` - The count of failed tests
     + `$batch.testsNew` - The count of new tests that caused baseline creation
-    + `$batch.getStepsPassed()` - The count of __total__ passed __steps__
-    + `$batch.getStepsFailed()` - The count of __total__ failed __steps__
-    + `$batch.getStepsNew()` - The count of __total__ new __steps__
-    + `$batch.getTotalBaselineSteps()` - The count of total steps in the baselines
-    + `$batch.getPassedRate()` - 100% based tests in batch pass rate
-    + `$batch.getFailedRate()` - 100% based tests in batch fail rate
-    + `$batch.getNewRate()` - 100% based tests in batch new rate
+    + `$batch.StepsPassed` - The count of __total__ passed __steps__
+    + `$batch.StepsMismatched` - The count of __total__ failed __steps__
+    + `$batch.StepsNew` - The count of __total__ new __steps__
+    + `$batch.TotalBaselineSteps` - The count of total steps in the baselines
+    + `$batch.PassedRate` - 100% based tests pass rate
+    + `$batch.MismatchedRate` - 100% based tests mismatch rate
+    + `$batch.NewRate` - 100% based tests in batch new rate  
+    ###### Test status results (Current status reflection that might be overridden by the user)
+    + `$batch.getTestsStatusPassed` - The amount of tests with Passed status
+    + `$batch.getTestsStatusUnresolved` - The amount of tests with Unresolved status
+    + `$batch.getTestsStatusRunning` - The amount of tests with Running status
+    + `$batch.TestsStatusFailed` - The amount of tests with Failed status
+    + `$batch.TestsStatusAborted` - The amount of tests with Aborted status
   + `#foreach($test in $batch.tests)` - While `$batch.tests` is list of contained tests objects
     + `$test.scenarioName` - The test name
     + `$test.getUrl()` - The url to the test
@@ -149,7 +156,6 @@ Here is the partial list of parameters that are exposed for usage in template co
     + `$test.MissingCount()` - The count of the passed steps in test
     + `$test.getStatus()` - Calculated test status within Passed/Failed/Unresolved
     + `$test.getIsDefaultStatus()` - Returns boolean status wether the appearing calculated status is the default one or was been overridden.
-
     + `#foreach($step in $test.getFailedSteps())` - While `$test.getFailedSteps()` is the list of contained failed steps objects
         + `$step.getAnimatedThumbprints()` - Downloads step animated thumbprint and returns file's relative path.
         + `$step.getExpectedImage()` - Downloads step baseline (expected) image and returns file's relative path.

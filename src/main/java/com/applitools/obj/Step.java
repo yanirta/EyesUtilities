@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ public class Step {
         } else if (actual.getIsMatching()) {
             return StepResult.Passed;
         } else {
-            return StepResult.Failed;
+            return StepResult.Mismatching;
         }
     }
 
@@ -73,7 +72,7 @@ public class Step {
     protected Map<String, String> getPathParams() {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("step_index", String.valueOf(index));
-        params.put("step_tag", actual.getTag());
+        params.put("step_tag", Utils.toFolderName(actual.getTag()));
         params.put("file_ext", ARTIFACT_EXT);
         return params;
     }
