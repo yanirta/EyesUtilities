@@ -365,10 +365,7 @@ public class TestInfo {
 
     public List<FailedStep> getFailedSteps() {
         LinkedList<FailedStep> failedSteps = new LinkedList();
-
         StepResult[] stepsResults = getStepsResults();
-        ResultsAPIContext ctx = ResultsAPIContext.instance();
-        ResultUrl ctxUrl = ctx.getUrl();
 
         for (int i = 0; i < stepsResults.length; ++i) {
             if (stepsResults[i] == StepResult.Mismatching) {

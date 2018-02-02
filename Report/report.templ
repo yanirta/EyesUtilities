@@ -170,10 +170,9 @@
                             </tr>
                             <tr>
                                 <td colspan="7" class="hiddenRow">
-                                    <div class="accordian-body collapse" id="diffs$i">
+                                    <div class="accordion-body collapse" id="diffs$i">
                                 #foreach($step in $test.getFailedSteps())
-                                ## <!--<img src="$step.getAnimatedThumbprints()" height="200"/>-->
-                                        <img src="$step.getAnimatedThumbprints(true)" style="height: 200px;" class="img-thumbnail"/>
+                                    <img src="$step.getAnimatedThumbprints(true)" style="height: 200px;" class="img-thumbnail"/>
                                 #end
                                     </div>
                                 <td>
