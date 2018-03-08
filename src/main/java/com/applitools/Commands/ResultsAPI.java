@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ResultsAPI implements Command {
-    @Parameter(description = "<result url>", required = true)
-    private List<String> url;
+    @Parameter(description = "<result url(s)>", required = true)
+    private List<String> urls;
 
     @Parameter(names = {"-k", "-key"}, description = "Enterprise view key", required = true)
     protected String viewKey;
@@ -18,13 +18,17 @@ public abstract class ResultsAPI implements Command {
     }
 
     public ResultsAPI(String resUrl, String viewKey) {
-        this.url = new ArrayList<String>();
-        this.url.add(resUrl);
+        this.urls = new ArrayList<String>();
+        this.urls.add(resUrl);
         this.viewKey = viewKey;
     }
 
     protected ResultUrl getUrl() {
-        if (url.size() != 1) throw new InvalidParameterException("must specify exactly one url");
-        return new ResultUrl(url.get(0));
+        if (urls.size() != 1) throw new InvalidParameterException("must specify exactly one url");
+        return new ResultUrl(urls.get(0));
+    }
+
+    protected List<String> getUrls() {
+        return urls;
     }
 }

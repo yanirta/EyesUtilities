@@ -29,8 +29,7 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
 
     public void run() throws Exception {
         ResultUrl resultUrl = getUrl();
-        ResultsAPIContext.init(resultUrl, viewKey);
-        ResultsAPIContext ctx = ResultsAPIContext.instance();
+        ResultsAPIContext ctx = new ResultsAPIContext(resultUrl, viewKey);
         PathGenerator generator = new PathGenerator(destination).build(getPathParams());
         if (resultUrl.getSessionId() != null) {
             //Just one test

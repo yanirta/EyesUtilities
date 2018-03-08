@@ -37,12 +37,12 @@ public class PathGenerator {
         return new PathGenerator(new String(param.replaceAll(param, value)));
     }
 
-    public PathGenerator build(Map<String, String> params) {
+    public PathGenerator build(Map<String, String> tokens) {
         String pathTempl = new String(path_template);
         String fileTempl = new String(file_template);
-        for (Map.Entry<String, String> param : params.entrySet()) {
-            pathTempl = pathTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, param.getKey()), param.getValue());
-            fileTempl = fileTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, param.getKey()), param.getValue());
+        for (Map.Entry<String, String> token : tokens.entrySet()) {
+            pathTempl = pathTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), token.getValue());
+            fileTempl = fileTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), token.getValue());
         }
         return new PathGenerator(pathTempl, fileTempl);
     }
@@ -51,13 +51,16 @@ public class PathGenerator {
         return new File(path_template);
     }
 
-    public File generatePath(String child) {
-        return new File(path_template, child);
-    }
+//    public File generatePath(String child) {
+//        return new File(path_template, child);
+//    }
 
     public File generateFile() {
         if (StringUtils.isEmpty(file_template)) throw new RuntimeException("file_template is empty");
-        return new File(path_template, file_template);
+        File pwd = new File(System.getProperty("user.dir"));
+        return new File(
+                pwd.toURI().relativize(new File(path_template, file_template).toURI()).getPath()
+        );
     }
 
     public void ensureTargetFolder() {

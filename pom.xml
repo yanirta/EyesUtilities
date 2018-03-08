@@ -57,5 +57,11 @@
             <artifactId>velocity</artifactId>
             <version>RELEASE</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 </project>

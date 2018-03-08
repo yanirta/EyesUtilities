@@ -20,30 +20,28 @@ public class FailedStep extends Step {
     private static final String ANIDIFF_ARTIFACT_EXT = "gif";
     private static final String DIFF_ARTIFACT_TYPE = "diff";
 
-    public FailedStep(int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
-        super(i, expected, actual, testId, pathGenerator);
+    public FailedStep(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
+        super(context, i, expected, actual, testId, pathGenerator);
     }
 
     public String getDiff() throws IOException {
-
-        ResultsAPIContext ctx = ResultsAPIContext.instance();
-        URL diffImage = ctx.getDiffImageUrl(testId, getIndex());
+        URL diffImage = getDiffImageUrl();
         Map<String, String> params = getPathParams();
         params.put("file_ext", DIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
         File destination = pathGenerator.build(params).generateFile();
         pathGenerator.ensureTargetFolder();
 
-        Utils.saveImage(diffImage.toString(), destination.toString());
+        Utils.saveImage(diffImage.toString(), destination);
         return destination.toString();
     }
 
     public String getAnimatedDiff() throws IOException {
-        return getAnimatedDiff(expected.getImageId(), actual.getImageId(), true, false);
+        return getAnimatedDiff(true, false);
     }
 
     public String getAnimatedDiff(int transitionInterval) throws IOException {
-        return getAnimatedDiff(expected.getImageId(), actual.getImageId(), true, false, transitionInterval);
+        return getAnimatedDiff(true, false, transitionInterval);
     }
 
     public String getAnimatedThumbprints() throws IOException {
@@ -52,7 +50,7 @@ public class FailedStep extends Step {
 
     public String getAnimatedThumbprints(boolean skipIfExists) throws IOException {
         try {
-            return getAnimatedDiff(expected.getThumbprintId(), actual.getThumbprintId(), false, skipIfExists);
+            return getAnimatedDiff(false, skipIfExists);
         } catch (Exception e) {
             return getAnimatedDiff();
         }
@@ -66,15 +64,14 @@ public class FailedStep extends Step {
         Utils.createAnimatedGif(images, target, transitionInterval);
     }
 
-    private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists) throws IOException {
-        return getAnimatedDiff(expectedImageId, actualImageId, withDiff, skipIfExists, ANIMATION_TRANSITION_INTERVAL);
+    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists) throws IOException {
+        return getAnimatedDiff(withDiff, skipIfExists, ANIMATION_TRANSITION_INTERVAL);
     }
 
-    private String getAnimatedDiff(String expectedImageId, String actualImageId, boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
-        ResultsAPIContext ctx = ResultsAPIContext.instance();
-        URL expectedImageURL = ctx.getImageUrl(expectedImageId);
-        URL actualImageURL = ctx.getImageUrl(actualImageId);
-        URL diffImageURL = ctx.getDiffImageUrl(testId, getIndex());
+    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
+        URL expectedImageURL = getExpectedImageUrl();
+        URL actualImageURL = getActualImageUrl();
+        URL diffImageURL = getDiffImageUrl();
 
         Map<String, String> params = getPathParams();
         params.put("file_ext", ANIDIFF_ARTIFACT_EXT);
@@ -94,6 +91,5 @@ public class FailedStep extends Step {
 
         return destination.toString(); //TODO relativize
     }
-
 
 }

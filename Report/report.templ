@@ -1,106 +1,55 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Applitools batch summary report for '$batch.name' from $batch.startedAt</title>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <title>Applitools batch(es) summary report $title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    </head>
-    <body>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script src="https://www.gstatic.com/charts/loader.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" integrity="sha256-owX7sroiO/O1a7h3a4X29A1g3QgqdNvijRQ7V5TH45M=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
-        <nav class="navbar navbar-default navbar-static-top">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="https://applitools.com" style="padding: 10px 10px;">
-                    <img src="http://applitools.com/images/applitools.png">
-                </a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a target="_blank" href="$batch.batchUrl" style="font-size: 20px; font-weight: bold;"> $batch.name </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div class="container">
-            <div class="page-header">
-                <h1>Batch summary report</h1>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th> </th>
-                                <th>Passed</th>
-                                <th>Unresolved</th>
-                                <th>Mismatched</th>
-                                <th>New</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Tests</td>
-                                <td>$batch.testsStatusPassed</td>
-                                <th>$batch.testsStatusUnresolved</th>
-                                <td>$batch.testsStatusFailed</td>
-                                <td> N/A </td>
-                                <td>$batch.TotalTests</td>
-                            </tr>
-                            <tr>
-                                <td>Steps</td>
-                                <td>$batch.StepsPassed</td>
-                                <th> N/A</th>
-                                <td>$batch.StepsMismatched</td>
-                                <th>$batch.StepsNew </th>
-                                <td>$batch.TotalBaselineSteps</td>
-                            </tr>
-                            <tr>
-                                <td>% Steps</td>
-                                <td>$batch.PassedRate%</td>
-                                <th>N/A</th>
-                                <td>$batch.MismatchedRate%</td>
-                                <th>$batch.NewRate </th>
-                                <td>-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="tests-chart"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="steps-chart"></div>
-                        </div>
-                        <script type="text/javascript">
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
                         // Load google charts
                         google.charts.load('current', {'packages':['corechart']});
                         google.charts.setOnLoadCallback(drawChart);
 
                         // Draw the chart and set the chart values
                         function drawChart() {
+
+                        var batches = google.visualization.arrayToDataTable([
+                            ['Item', 'Count'],
+                            ['Failed', $batches.batchesFailed],
+                            ['Passed', $batches.batchesPassed],
+                            ['Unresolved', $batches.batchesUnresolved],
+                            ['Running', $batches.batchesRunning],
+                        ]);
+
                           var tests = google.visualization.arrayToDataTable([
                           ['Item', 'Count'],
-                          ['Failed', $batch.testsStatusFailed],
-                          ['Passed', $batch.testsStatusPassed],
-                          ['Unresolved', $batch.testsStatusUnresolved]
+                          ['Failed', $batches.testsFailed],
+                          ['Passed', $batches.testsPassed],
+                          ['Unresolved', $batches.testsUnresolved],
+                          ['Running', $batches.testsRunning]
                         ]);
 
                         var steps = google.visualization.arrayToDataTable([
                           ['Item', 'Count'],
-                          ['Failed', $batch.StepsMismatched],
-                          ['Passed', $batch.StepsPassed],
-                          ['New', $batch.StepsNew]
+                          ['Mismatched', $batches.StepsMismatched],
+                          ['Matched', $batches.StepsMatched],
+                          ['New', $batches.StepsNew],
+                          ['Missing', $batches.StepsMissing]
                         ]);
 
                           // Optional; add a title and set the width and height of the chart
@@ -110,78 +59,282 @@
                             slices: {
                                     0: { color: 'red' },
                                     1: { color: 'green' },
-                                    2: { color: 'orange' }
+                                    2: { color: 'orange' },
+                                    3: { color: 'blue' }
                                 }
                             };
+                          var batchesChart = new google.visualization.PieChart(document.getElementById('batches-chart'));
                           var testsChart = new google.visualization.PieChart(document.getElementById('tests-chart'));
                           var stepsChart = new google.visualization.PieChart(document.getElementById('steps-chart'));
                           testsChart.draw(tests, options);
                           options['title'] = 'Steps';
                           stepsChart.draw(steps, options);
+                          options['title'] = 'batches';
+                          batchesChart.draw(batches, options);
                         }
-                        </script>
-                    </div>
-                </div>
-            </div>
 
-            <!--<div>-->
-                <!--Batch id: $batch.id<br/>-->
-                <!--Batch started at: $batch.startedAt<br/>-->
-            <!--</div>-->
 
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-striped" style="border-collapse:collapse;">
-                        <thead>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="https://applitools.com" style="padding: 10px 10px;">
+        <img src="http://applitools.com/images/applitools.png">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">$title Batches summary report</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="row">
+        <div class="col-4 col-md-4">
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>Batches</th>
+                    <th>#</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Passed</td>
+                    <td>$batches.batchesPassed</td>
+                    <td>$numberTool.format("#0.00", $batches.batchesPassedRate)</td>
+
+                </tr>
+                <tr>
+                    <td>Failed</td>
+                    <td>$batches.batchesFailed</td>
+                    <td>$numberTool.format("#0.00", $batches.batchesFailedRate)</td>
+                </tr>
+                <tr>
+                    <td>Unresolved</td>
+                    <td>$batches.batchesUnresolved</td>
+                    <td>$numberTool.format("#0.00", $batches.batchesUnresolvedRate)</td>
+                </tr>
+                <tr>
+                    <td>Running</td>
+                    <td>$batches.batchesRunning</td>
+                    <td>$numberTool.format("#0.00", $batches.batchesRunningRate)</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$batches.size()</td>
+                    <td>100</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-2 col-md-2">
+
+        </div>
+        <div class="col-6 col-md-6">
+            <div id="batches-chart"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 col-md-4">
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>Tests</th>
+                    <th>#</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Passed</td>
+                    <td>$batches.testsPassed</td>
+                    <td>$numberTool.format("#0.00", $batches.testsPassedRate)</td>
+                </tr>
+                <tr>
+                    <td>Failed</td>
+                    <td>$batches.testsFailed</td>
+                    <td>$numberTool.format("#0.00", $batches.testsFailedRate)</td>
+                </tr>
+                <tr>
+                    <td>Unresolved</td>
+                    <td>$batches.testsUnresolved</td>
+                    <td>$numberTool.format("#0.00", $batches.testsUnresolvedRate)</td>
+                </tr>
+                <tr>
+                    <td>Running</td>
+                    <td>$batches.testsRunning</td>
+                    <td>$numberTool.format("#0.00", $batches.testsRunningRate)</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$batches.testsTotal</td>
+                    <td>-</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-2 col-md-2"></div>
+        <div class="col-6 col-md-6">
+            <div id="tests-chart"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 col-md-4">
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>Steps</th>
+                    <th>#</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Matched</td>
+                    <td>$batches.StepsMatched</td>
+                    <td>$numberTool.format("#0.00", $batches.stepsMatchedRate)</td>
+                </tr>
+                <tr>
+                    <td>Mismatched</td>
+                    <td>$batches.stepsMismatched</td>
+                    <td>$numberTool.format("#0.00", $batches.stepsMismatchedRate)</td>
+                </tr>
+                <tr>
+                    <td>New</td>
+                    <td>$batches.stepsNew</td>
+                    <td>$numberTool.format("#0.00", $batches.stepsNewRate)</td>
+                </tr>
+                <tr>
+                    <td>Missing</td>
+                    <td>$batches.stepsMissing</td>
+                    <td>$numberTool.format("#0.00", $batches.stepsMissingRate)</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$batches.stepsTotal</td>
+                    <td>-</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-2 col-md-2"></div>
+        <div class="col-6 col-md-6">
+            <div id="steps-chart"></div>
+        </div>
+    </div>
+
+    #macro( badge $status )
+    #if ($status == "Unresolved")
+    badge-warning
+    #elseif ($status == "Passed")
+    badge-success
+    #elseif ($status == "Running")
+    badge-primary
+    #else
+    badge-danger
+    #end
+    #end
+
+    <div class="row">
+        <div class="col-12 col-md-12 col-xl-12 py-md-3 pl-md-5 bd-content">
+            <h2>Batches details</h2>
+            <table class="table" style="border-collapse:collapse;">
+                <thead class="thead-light">
+                <tr>
+                    <th>#</th>
+                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Passed</th>
+                    <th>Failed</th>
+                    <th>Unresolved</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                #set($b = 1)
+                #foreach($batch in $batches)
+                <tr data-toggle="collapse" class="accordion-toggle" data-target="#batch$j">
+                    <td>$b</td>
+                    <td><span class="badge #badge( $batch.Status )"> $batch.Status </span></td>
+                    <td><a href="$batch.Url" title="Batch-id: $batch.id"> $batch.name</a></td>
+                    <td>$batch.TestsPassed</td>
+                    <td>$batch.TestsFailed</td>
+                    <td>$batch.TestsUnresolved</td>
+                    <td>$batch.TotalTests</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="6">
+                        <table class="table table-sm table-striped" style="border-collapse:collapse;width:100%">
+                            <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Status</th>
                                 <th>Name</th>
-                                <th>#Steps</th>
-                                <th>Mismatched</th>
-                                <th>Passed</th>
+                                <th>Match</th>
+                                <th>Mismatch</th>
                                 <th>New</th>
                                 <th>Missing</th>
+                                <th>Total</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        #set($i = 0)
-                        #foreach($test in $batch.tests)
-                            #set($i = $i + 1)
-                            #set($status = $test.getStatus())
-                            #if ($status == "Unresolved")
-                                #set($class = "label-warning")
-                            #elseif ($status == "Passed")
-                                #set($class = "label-success")
-                            #elseif ($status == "Running")
-                                #set($class = "label-primary")
-                            #else
-                                #set($class = "label-danger")
-                        #end
-                            <tr data-toggle="collapse" class="accordion-toggle" data-target="#diffs$i">
+                            </thead>
+                            <tbody>
+                            #set($i = 1)
+                            #foreach($test in $batch.tests)
+                            <tr data-toggle="collapse" class="accordion-toggle" data-target="#diffs${i}_${b}">
                                 <td>$i</td>
-                                <td><h5><span class="label $class">$test.getStatus()</span></h5></td>
+                                <td><span class="badge #badge( $test.Status )">$test.getStatus()</span></td>
                                 <td><a href="$test.getUrl()steps/1"> $test.scenarioName </a></td>
-                                <td>$test.TotalActualSteps()</td>
-                                <td>$test.MismatchingCount()</td>
-                                <td>$test.PassedCount()</td>
-                                <td>$test.NewCount()</td>
-                                <td>$test.MissingCount()</td>
+                                <td>$test.MatchedCount</td>
+                                <td>$test.MismatchedCount</td>
+                                <td>$test.NewCount</td>
+                                <td>$test.MissingCount</td>
+                                <td>$test.TotalActualSteps</td>
                             </tr>
+                            #set($failedSteps = $test.getFailedSteps())
+                            #if ($failedSteps.size() > 0)
                             <tr>
-                                <td colspan="7" class="hiddenRow">
-                                    <div class="accordion-body collapse" id="diffs$i">
-                                #foreach($step in $test.getFailedSteps())
-                                    <img src="$step.getAnimatedThumbprints(true)" style="height: 200px;" class="img-thumbnail"/>
-                                #end
+                                <td colspan="8">
+                                    <div class="accordion-body collapse" id="diffs${i}_${b}">
+                                        #foreach($step in $failedSteps)
+                                        <img src="$step.getAnimatedThumbprints(true)" style="height: 200px;"
+                                             class="img-thumbnail"/>
+                                        #end
                                     </div>
                                 <td>
                             </tr>
-                        #end
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                            #end
+                            #set($i = $i + 1)
+                            #end
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                #set($b = $b + 1)
+                #end
+                </tbody>
+            </table>
         </div>
-    </body>
+    </div>
+</main>
+</body>
 </html>

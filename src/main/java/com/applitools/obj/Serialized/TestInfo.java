@@ -18,12 +18,13 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestInfo {
+    private static final String PLAYBACK_FILE_TMPL = "%s//file:test_playback.gif";
 
     //region Fields
     private String Id;
     private Boolean isAborted;
     private Boolean isDefaultStatus;
-    private TestStatus Status;
+    private com.applitools.obj.Status Status;
     private Object savedTo;
     private String runningSessionId;
     private String legacySessionId;
@@ -54,7 +55,7 @@ public class TestInfo {
     private Object appOutputResolution;
     private Object branch;
     private Object baselineBranchName;
-    private StepResult[] stepsResults = null;
+    private Result[] stepsResults = null;
     private Integer revision;
     private Boolean isStarred;
     private String secretToken;
@@ -62,54 +63,30 @@ public class TestInfo {
 
     @JsonIgnore
     private PathGenerator pathGenerator;
+    @JsonIgnore
+    private ResultsAPIContext context;
 
     //region getters/setters
+
+    //region getters
     public Object getSavedTo() {
         return savedTo;
-    }
-
-    public void setSavedTo(Object savedTo) {
-        this.savedTo = savedTo;
     }
 
     public Boolean getIsDefaultStatus() {
         return isDefaultStatus;
     }
 
-    public void setIsDefaultStatus(Boolean defaultStatus) {
-        isDefaultStatus = defaultStatus;
-    }
-
-    public TestStatus getStatus() {
+    public Status getStatus() {
         return Status;
-    }
-
-    public void setStatus(TestStatus status) {
-        Status = status;
-    }
-
-    public Boolean getIsAborted() {
-        return isAborted;
-    }
-
-    public void setIsAborted(Boolean aborted) {
-        isAborted = aborted;
     }
 
     public String getBaselineEnvId() {
         return baselineEnvId;
     }
 
-    public void setBaselineEnvId(String baselineEnvId) {
-        this.baselineEnvId = baselineEnvId;
-    }
-
     public Object getAppEnvironment() {
         return appEnvironment;
-    }
-
-    public void setAppEnvironment(Object appEnvironment) {
-        this.appEnvironment = appEnvironment;
     }
 
     public String getId() {
@@ -196,6 +173,174 @@ public class TestInfo {
         return IsNew;
     }
 
+    public String getModelId() {
+        return modelId;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public Object getAppOutputResolution() {
+        return appOutputResolution;
+    }
+
+    public String getUrl() throws MalformedURLException {
+        return context.getTestAppUrl(getId()).toString();//TODO to check
+    }
+
+    public int getTotalBaselineSteps() {
+        int count = 0;
+        if (ExpectedAppOutput == null) return count;
+        for (ExpectedStepResult step : ExpectedAppOutput)
+            if (step != null) ++count;
+        return count;
+    }
+
+    public int getTotalActualSteps() {
+        int count = 0;
+        if (ActualAppOutput == null) return count;
+        for (ActualStepResult step : ActualAppOutput)
+            if (step != null) ++count;
+        return count;
+    }
+
+    public int getMissingCount() {
+        return count(Result.Missing);
+    }
+
+    public int getNewCount() {
+        return count(Result.New);
+    }
+
+    public int getMatchedCount() {
+        return count(Result.Matched);
+    }
+
+    public int getMismatchedCount() {
+        return count(Result.Mismatched);
+    }
+
+    public String getBaselineId() {
+        return baselineId;
+    }
+
+    public String getBaselineRevId() {
+        return baselineRevId;
+    }
+
+    public List<FailedStep> getFailedSteps() {
+        LinkedList<FailedStep> failedSteps = new LinkedList();
+        Result[] stepsResults = getStepsResults();
+
+        for (int i = 0; i < stepsResults.length; ++i) {
+            if (stepsResults[i] == Result.Mismatched) {
+                failedSteps.add(
+                        new FailedStep(
+                                context,
+                                i + 1,
+                                ExpectedAppOutput.get(i),
+                                ActualAppOutput.get(i),
+                                getId(),
+                                pathGenerator));
+            }
+        }
+        return failedSteps;
+    }
+
+    public List<Step> getSteps() {
+        LinkedList<Step> steps = new LinkedList();
+        if (ExpectedAppOutput == null || ActualAppOutput == null) return steps;
+
+        int count = Math.max(ExpectedAppOutput.size(), ActualAppOutput.size());
+
+        for (int i = 0; i < count; ++i)
+            steps.add(
+                    new Step(
+                            context,
+                            i + 1,
+                            ExpectedAppOutput.get(i),
+                            ActualAppOutput.get(i),
+                            getId(),
+                            pathGenerator));
+        return steps;
+    }
+
+    public Object getBranch() {
+        return branch;
+    }
+
+    public Object getBaselineBranchName() {
+        return baselineBranchName;
+    }
+
+    public Integer getRevision() {
+        return revision;
+    }
+
+    public Boolean getIsStarred() {
+        return isStarred;
+    }
+
+    public String getSecretToken() {
+        return secretToken;
+    }
+
+    public String getPlaybackAnimation(int interval, boolean withDiffs) throws IOException {
+        pathGenerator.ensureTargetFolder();
+
+        List<BufferedImage> images = new ArrayList<BufferedImage>(ActualAppOutput.size());
+        for (Step step : getSteps()) {
+            if (step.result() != Result.Missing)
+                if (withDiffs && step.result() == Result.Mismatched)
+                    images.add(ImageIO.read(step.getDiffImageUrl()));
+                else
+                    images.add(ImageIO.read(step.getActualImageUrl()));
+        }
+
+        File file = new PathGenerator(String.format(PLAYBACK_FILE_TMPL, pathGenerator.generatePath().toString())).generateFile();
+        Utils.createAnimatedGif(images, file, interval);
+
+        return file.getPath();
+    }
+
+    public String getResult() {
+        if (getIsNew()) return "New";
+        else if (getIsDifferent()) return "Mismatched";
+        else return "Matched";
+    }
+
+    //endregion
+
+    //region setters
+    public void setSavedTo(Object savedTo) {
+        this.savedTo = savedTo;
+    }
+
+    public void setIsDefaultStatus(Boolean defaultStatus) {
+        isDefaultStatus = defaultStatus;
+    }
+
+    public void setStatus(com.applitools.obj.Status status) {
+        Status = status;
+    }
+
+    public Boolean getIsAborted() {
+        return isAborted;
+    }
+
+    public void setIsAborted(Boolean aborted) {
+        isAborted = aborted;
+    }
+
+    public void setBaselineEnvId(String baselineEnvId) {
+        this.baselineEnvId = baselineEnvId;
+    }
+
+    public void setAppEnvironment(Object appEnvironment) {
+        this.appEnvironment = appEnvironment;
+    }
+
     public void setId(String id) {
         this.Id = id;
     }
@@ -280,190 +425,49 @@ public class TestInfo {
         IsNew = isNew;
     }
 
-    public String getModelId() {
-        return modelId;
-    }
-
     public void setModelId(String modelId) {
         this.modelId = modelId;
-    }
-
-    public String getBranchName() {
-        return branchName;
     }
 
     public void setBranchName(String branchName) {
         this.branchName = branchName;
     }
 
-    public Object getAppOutputResolution() {
-        return appOutputResolution;
-    }
-
     public void setAppOutputResolution(Object appOutputResolution) {
         this.appOutputResolution = appOutputResolution;
-    }
-    //endregion
-
-    public String getUrl() throws MalformedURLException {
-        return ResultsAPIContext.instance().getTestAppUrl(getId()).toString();//TODO to check
-    }
-
-    public int TotalBaselineSteps() {
-        int count = 0;
-        if (ExpectedAppOutput == null) return count;
-        for (ExpectedStepResult step : ExpectedAppOutput)
-            if (step != null) ++count;
-        return count;
-    }
-
-    public int TotalActualSteps() {
-        int count = 0;
-        if (ActualAppOutput == null) return count;
-        for (ActualStepResult step : ActualAppOutput)
-            if (step != null) ++count;
-        return count;
-    }
-
-    public int MissingCount() {
-        return count(StepResult.Missing);
-    }
-
-    public int NewCount() {
-        return count(StepResult.New);
-    }
-
-    public int PassedCount() {
-        return count(StepResult.Passed);
-    }
-
-    public int MismatchingCount() {
-        return count(StepResult.Mismatching);
-    }
-
-    public String getBaselineId() {
-        return baselineId;
     }
 
     public void setBaselineId(String baselineId) {
         this.baselineId = baselineId;
     }
 
-    public String getBaselineRevId() {
-        return baselineRevId;
-    }
-
     public void setBaselineRevId(String baselineRevId) {
         this.baselineRevId = baselineRevId;
-    }
-
-    public String Result() {
-        if (getIsNew()) return "New";
-        else if (getIsDifferent()) return "Mismatching";
-        else return "Passed";
-    }
-
-    public List<FailedStep> getFailedSteps() {
-        LinkedList<FailedStep> failedSteps = new LinkedList();
-        StepResult[] stepsResults = getStepsResults();
-
-        for (int i = 0; i < stepsResults.length; ++i) {
-            if (stepsResults[i] == StepResult.Mismatching) {
-                failedSteps.add(
-                        new FailedStep(
-                                i + 1,
-                                ExpectedAppOutput.get(i),
-                                ActualAppOutput.get(i),
-                                getId(),
-                                pathGenerator));
-            }
-        }
-        return failedSteps;
-    }
-
-    public List<Step> getSteps() {
-        LinkedList<Step> steps = new LinkedList();
-        if (ExpectedAppOutput == null || ActualAppOutput == null) return steps;
-
-        int count = Math.max(ExpectedAppOutput.size(), ActualAppOutput.size());
-
-        for (int i = 0; i < count; ++i)
-            steps.add(
-                    new Step(
-                            i + 1,
-                            ExpectedAppOutput.get(i),
-                            ActualAppOutput.get(i),
-                            getId(),
-                            pathGenerator));
-        return steps;
-    }
-
-    //region privates
-    private String getBatchName() {
-        return ((HashMap) ((HashMap) this.getStartInfo()).get("batchInfo")).get("name").toString();
-    }
-
-    private StepResult[] getStepsResults() {
-        if (stepsResults != null) return stepsResults;
-
-        List<Step> steps = getSteps();
-        stepsResults = new StepResult[steps.size()];
-
-        int i = 0;
-        for (Step step : steps) {
-            stepsResults[i++] = step.result();
-        }
-
-        return stepsResults;
-    }
-
-    private int count(StepResult criteria) {
-        int count = 0;
-        StepResult[] results = getStepsResults();
-        for (int i = 0; i < results.length; ++i)
-            if (results[i] == criteria)
-                ++count;
-        return count;
-    }
-
-    public Object getBranch() {
-        return branch;
     }
 
     public void setBranch(Object branch) {
         this.branch = branch;
     }
 
-    public Object getBaselineBranchName() {
-        return baselineBranchName;
-    }
-
     public void setBaselineBranchName(Object baselineBranchName) {
         this.baselineBranchName = baselineBranchName;
-    }
-
-    public Integer getRevision() {
-        return revision;
     }
 
     public void setRevision(Integer revision) {
         this.revision = revision;
     }
 
-    public Boolean getIsStarred() {
-        return isStarred;
-    }
-
     public void setIsStarred(Boolean starred) {
         isStarred = starred;
     }
 
-    public String getSecretToken() {
-        return secretToken;
-    }
-
     public void setSecretToken(String secretToken) {
         this.secretToken = secretToken;
+    }
+
+    @JsonIgnore
+    public void setContext(ResultsAPIContext context) {
+        this.context = context;
     }
 
     @JsonIgnore
@@ -480,32 +484,38 @@ public class TestInfo {
         params.put("viewport", getEnv().getDisplaySizeStr());
         this.pathGenerator = pathGenerator.build(params);
     }
+    //endregion
 
-    private static final String PLAYBACK_FILE_TMPL = "test_playback.gif";
+    //endregion
 
-    public String getPlaybackAnimation(int interval, boolean withDiffs) throws IOException {
-        pathGenerator.ensureTargetFolder();
+    //region privates
+    private String getBatchName() {
+        return ((HashMap) ((HashMap) this.getStartInfo()).get("batchInfo")).get("name").toString();
+    }
 
-        List<BufferedImage> images = new ArrayList<BufferedImage>(ActualAppOutput.size());
-        for (Step step : getSteps()) {
-            if (step.result() != StepResult.Missing)
-                if (withDiffs && step.result() == StepResult.Mismatching)
-                    images.add(ImageIO.read(step.getDiffImageUrl()));
-                else
-                    images.add(ImageIO.read(step.getActualImageUrl()));
+    private Result[] getStepsResults() {
+        if (stepsResults != null) return stepsResults;
+
+        List<Step> steps = getSteps();
+        stepsResults = new Result[steps.size()];
+
+        int i = 0;
+        for (Step step : steps) {
+            stepsResults[i++] = step.result();
         }
-        File file = pathGenerator.generatePath(PLAYBACK_FILE_TMPL);
-        Utils.createAnimatedGif(images, file, interval);
 
-        return file.getPath();
+        return stepsResults;
     }
 
-    public boolean isAborted() {
-        return isAborted;
-    }
-
-    public void setAborted(boolean aborted) {
-        isAborted = aborted;
+    private int count(Result criteria) {
+        int count = 0;
+        Result[] results = getStepsResults();
+        for (int i = 0; i < results.length; ++i)
+            if (results[i] == criteria)
+                ++count;
+        return count;
     }
     //endregion
+
+
 }

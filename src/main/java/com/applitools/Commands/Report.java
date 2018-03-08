@@ -1,5 +1,6 @@
 package com.applitools.Commands;
 
+import com.applitools.obj.Batches;
 import com.applitools.obj.PathGenerator;
 import com.applitools.obj.Serialized.BatchInfo;
 import com.applitools.obj.Contexts.ResultsAPIContext;
@@ -9,6 +10,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
+import org.apache.velocity.tools.generic.NumberTool;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +27,9 @@ public class Report extends ResultsAPI {
 
     @Parameter(names = {"-d", "--destination"}, description = "Output folder+file destination.")
     private String reportoutfile = "report.html";
+
+    @Parameter(names = {"-rt", "--title"}, description = "Report title for display purposes")
+    private String reportTitle = "";
 
     private File templFile = null;
 
@@ -74,13 +79,13 @@ public class Report extends ResultsAPI {
 
     private VelocityContext createContext() throws IOException {
         PathGenerator baseGenerator = outPathGenerator.build(getSelfPathParams());
-
-        ResultsAPIContext ctx = ResultsAPIContext.init(getUrl(), viewKey);
         VelocityContext context = new VelocityContext();
-        BatchInfo batchInfo = BatchInfo.get(ctx, baseGenerator);
-        if (batchInfo == null) return null;
-        context.internalPut("batch", batchInfo);
-        context.internalPut("server_url", getUrl().getServerAddress());
+        Batches batches = new Batches(getUrls(), viewKey, baseGenerator);
+        if (batches.size() == 0) return null;
+        context.internalPut("batches", batches);
+        context.internalPut("numberTool", new NumberTool());
+        context.internalPut("title", reportTitle);
+        //context.internalPut("server_url", getUrl().getServerAddress());
         return context;
     }
 }

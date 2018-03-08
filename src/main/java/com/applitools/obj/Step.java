@@ -22,8 +22,10 @@ public class Step {
     protected ActualStepResult actual;
     protected PathGenerator pathGenerator;
     private int index;
+    private ResultsAPIContext context;
 
-    public Step(int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
+    public Step(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
+        this.context = context;
         this.index = i;
         this.expected = expected;
         this.actual = actual;
@@ -39,24 +41,29 @@ public class Step {
         return saveResourceById(actual.getImageId(), ACTUAL_ARTIFACT_TYPE);
     }
 
-    public StepResult result() {
+    public Result result() {
         if (expected == null) {
-            return StepResult.New;
+            return Result.New;
         } else if (actual == null) {
-            return StepResult.Missing;
+            return Result.Missing;
         } else if (actual.getIsMatching()) {
-            return StepResult.Passed;
+            return Result.Matched;
         } else {
-            return StepResult.Mismatching;
+            return Result.Mismatched;
         }
     }
 
+
+    public URL getExpectedImageUrl() throws MalformedURLException {
+        return context.getImageUrl(expected.getImageId());
+    }
+
     public URL getActualImageUrl() throws MalformedURLException {
-        return ResultsAPIContext.instance().getImageUrl(actual.getImageId());
+        return context.getImageUrl(actual.getImageId());
     }
 
     public URL getDiffImageUrl() throws MalformedURLException {
-        return ResultsAPIContext.instance().getDiffImageUrl(testId, index);
+        return context.getDiffImageUrl(testId, index);
     }
 
     private String saveResourceById(String imageId, String artifact_type) throws IOException {
@@ -64,8 +71,8 @@ public class Step {
         params.put("artifact_type", artifact_type);
         File destination = pathGenerator.build(params).generateFile();
         pathGenerator.ensureTargetFolder();
-        URL imageResource = ResultsAPIContext.instance().getImageResource(imageId);
-        Utils.saveImage(imageResource.toString(), destination.toString());
+        URL imageResource = context.getImageResource(imageId);
+        Utils.saveImage(imageResource.toString(), destination);
         return destination.toString();
     }
 

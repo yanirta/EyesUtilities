@@ -2,6 +2,8 @@ package com.applitools.obj.Serialized;
 
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.PathGenerator;
+import com.applitools.obj.Result;
+import com.applitools.obj.Status;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -19,35 +21,27 @@ public class BatchInfo {
     private String batchId;
     private String startedAt;
     private int testsNew = 0;
-    private int testsPassed = 0;
-    private int testsUnresolved = 0;
+    private int testsMatched = 0;
     private int testsMismatched = 0;
     private int testsRunning = 0;
     private int stepsNew = 0;
-    private int stepsPassed = 0;
+    private int stepsMatched = 0;
     private int stepsMismatched = 0;
     private int stepsMissing = 0;
     private int totalBaselineSteps = 0;
-    private int testsStatusPassed = 0;
-    private int testsStatusUnresolved = 0;
-    private int testsStatusRunning = 0;
-    private int testsStatusFailed = 0;
-    private int testsStatusAborted = 0;
+    private int totalActualSteps = 0;
+    private int testsPassed = 0;
+    private int testsUnresolved = 0;
+    //    private int testsStatusRunning = 0;
+    private int testsFailed = 0;
+    private int testsAborted = 0;
 
     private String url;
 
     //JSON Ignored
     private PathGenerator pathGenerator;
-
-
-
-    private BatchInfo() {
-    }
-
-    private BatchInfo(TestInfo[] tests, String url) {
-        this.tests = tests;
-        this.url = url;
-    }
+    private ResultsAPIContext context;
+    private Result batchResult = Result.Matched;
 
     public static BatchInfo get(ResultsAPIContext ctx, PathGenerator pathGenerator) throws IOException {
         URL batchUrl = ctx.getBatchAPIurl();
@@ -64,40 +58,9 @@ public class BatchInfo {
         bi.url = ctx.getBatchAPPurl().toString();
         bi.batchId = infos[0].getBatchId();
         bi.setPathGenerator(pathGenerator);
+        bi.setContext(ctx);
         bi.calculateBatchMetrics();
         return bi;
-    }
-
-    private void calculateBatchMetrics() {
-        for (TestInfo test : tests) {
-            if (!test.getState().equalsIgnoreCase("Completed")) ++testsRunning;
-            else if (test.getIsNew()) ++testsNew;
-            else if (test.getIsDifferent()) ++testsMismatched;
-            else ++testsPassed;
-
-            switch (test.getStatus()) {
-                case Passed:
-                    ++testsStatusPassed;
-                    break;
-                case Failed:
-                    ++testsStatusFailed;
-                    break;
-                case Unresolved:
-                    ++testsStatusUnresolved;
-                    break;
-                case Running:
-                    ++testsStatusRunning;
-                    break;
-                case Aborted:
-                    ++testsStatusAborted;
-                    break;
-            }
-            stepsNew += test.NewCount();
-            stepsPassed += test.PassedCount();
-            stepsMismatched += test.MismatchingCount();
-            stepsMissing += test.MissingCount();
-            totalBaselineSteps += test.TotalBaselineSteps();
-        }
     }
 
     public TestInfo[] getTestInfos() {
@@ -132,88 +95,16 @@ public class BatchInfo {
         return tests;
     }
 
-    public int getTotalTests() {
-        return tests.length;
-    }
+//    public void setTestsNew(int testsNew) {
+//        this.testsNew = testsNew;
+//    }
 
-    public int getTestsNew() {
-        return testsNew;
-    }
-
-    public void setTestsNew(int testsNew) {
-        this.testsNew = testsNew;
-    }
-
-    public int getTestsPassed() {
-        return testsPassed;
-    }
-
-    public void setTestsPassed(int testsPassed) {
-        this.testsPassed = testsPassed;
-    }
-
-    public int getTestsMismatched() {
-        return testsMismatched;
-    }
-
-    public void setTestsMismatched(int testsMismatched) {
-        this.testsMismatched = testsMismatched;
-    }
-
-    public int getTestsUnresolved() {
-        return testsUnresolved;
-    }
-
-    public int getTestsRunning() {
-        return testsRunning;
-    }
-
-    public void setTestsRunning(int testsRunning) {
-        this.testsRunning = testsRunning;
-    }
-
-    public String getBatchUrl() {
+    public String getUrl() {
         return url;
     }
 
     public void setBatchUrl(String url) {
         this.url = url;
-    }
-
-    public int getStepsNew() {
-        return stepsNew;
-    }
-
-    public double getNewRate() {
-        return 100 * ((double) stepsNew / totalBaselineSteps);
-    }
-
-    public int getStepsPassed() {
-        return stepsPassed;
-    }
-
-    public double getPassedRate() {
-        return 100 * ((double) stepsPassed / totalBaselineSteps);
-    }
-
-    public int getStepsMismatched() {
-        return stepsMismatched;
-    }
-
-    public double getMismatchedRate() {
-        return 100 * ((double) stepsMismatched / totalBaselineSteps);
-    }
-
-    public int getStepsMissing() {
-        return stepsMissing;
-    }
-
-    public double getMissingRate() {
-        return 100 * ((double) stepsMissing / totalBaselineSteps);
-    }
-
-    public int getTotalBaselineSteps() {
-        return totalBaselineSteps;
     }
 
     public void setPathGenerator(PathGenerator pathGenerator) {
@@ -224,23 +115,150 @@ public class BatchInfo {
         for (TestInfo ti : tests) ti.setPathGenerator(this.pathGenerator);
     }
 
-    public int getTestsStatusPassed() {
-        return testsStatusPassed;
+    public void setContext(ResultsAPIContext context) {
+        this.context = context;
+        for (TestInfo ti : tests) ti.setContext(context);
     }
 
-    public int getTestsStatusUnresolved() {
-        return testsStatusUnresolved;
+    //region privates
+    private BatchInfo() {
     }
 
-    public int getTestsStatusRunning() {
-        return testsStatusRunning;
+    private BatchInfo(TestInfo[] tests, String url) {
+        this.tests = tests;
+        this.url = url;
     }
 
-    public int getTestsStatusFailed() {
-        return testsStatusFailed;
+    private void calculateBatchMetrics() {
+        for (TestInfo test : tests) {
+            //if (!test.getState().equalsIgnoreCase("Completed")) ++testsRunning;
+            if (test.getIsNew()) ++testsNew;
+            else if (test.getIsDifferent()) ++testsMismatched;
+            else ++testsMatched;
+
+            switch (test.getStatus()) {
+                case Passed:
+                    ++testsPassed;
+                    break;
+                case Failed:
+                    ++testsFailed;
+                    break;
+                case Unresolved:
+                    ++testsUnresolved;
+                    break;
+                case Running:
+                    ++testsRunning;
+                    break;
+                case Aborted:
+                    ++testsAborted;
+                    break;
+            }
+            stepsNew += test.getNewCount();
+            stepsMatched += test.getMatchedCount();
+            stepsMismatched += test.getMismatchedCount();
+            stepsMissing += test.getMissingCount();
+            totalBaselineSteps += test.getTotalBaselineSteps();
+            totalActualSteps += test.getTotalActualSteps();
+        }
+    }
+    //endregion
+
+    //region data getters
+    //region batch data
+    public Status getStatus() {
+        if (testsRunning > 0) return Status.Running;
+        if (testsAborted > 0 || testsUnresolved > 0) return Status.Unresolved;
+        if (testsFailed > 0) return Status.Failed;
+        return Status.Passed;
     }
 
-    public int getTestsStatusAborted() {
-        return testsStatusAborted;
+    public Result getResult() {
+        if (testsRunning > 0) return Result.Running;
+        if (testsMismatched > 0) return Result.Mismatched;
+        return Result.Matched;
     }
+    //endregion
+
+    //region tests data
+    public int getTestsNew() {
+        return testsNew;
+    }
+
+    public int getTestsMatched() {
+        return testsMatched;
+    }
+
+    public int getTestsMismatched() {
+        return testsMismatched;
+    }
+
+    public int getTestsRunning() {
+        return testsRunning;
+    }
+
+    public int getTestsUnresolved() {
+        return testsUnresolved;
+    }
+
+    public int getTestsFailed() {
+        return testsFailed;
+    }
+
+    public int getTestsAborted() {
+        return testsAborted;
+    }
+
+    public int getTestsPassed() {
+        return testsPassed;
+    }
+
+    public int getTotalTests() {
+        return tests.length;
+    }
+    //endregion
+
+    //region steps data
+    public int getTotalActualSteps() {
+        return totalActualSteps;
+    }
+
+    public int getStepsMissing() {
+        return stepsMissing;
+    }
+
+    public int getTotalBaselineSteps() {
+        return totalBaselineSteps;
+    }
+
+    public int getStepsNew() {
+        return stepsNew;
+    }
+
+    public int getStepsMatched() {
+        return stepsMatched;
+    }
+
+    public int getStepsMismatched() {
+        return stepsMismatched;
+    }
+
+    public double getNewRate() {
+        return 100 * ((double) stepsNew / totalBaselineSteps);
+    }
+
+    public double getMatchedRate() {
+        return 100 * ((double) stepsMatched / totalBaselineSteps);
+    }
+
+    public double getMissingRate() {
+        return 100 * ((double) stepsMissing / totalBaselineSteps);
+    }
+
+    public double getMismatchedRate() {
+        return 100 * ((double) stepsMismatched / totalBaselineSteps);
+    }
+
+    //endregion
+
+    //endregion
 }

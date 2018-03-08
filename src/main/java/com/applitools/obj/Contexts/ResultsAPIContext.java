@@ -13,25 +13,29 @@ public class ResultsAPIContext {
     private static final String IMAGE_URL_TEMPLATE = "https://%s/api/images/%s/?ApiKey=%s";
     private static final String DIFF_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s/steps/%s/diff?ApiKey=%s";
 
-    private static ResultsAPIContext context_;
+    //private static ResultsAPIContext context_;
     private final ResultUrl url;
     private final String viewkey;
 
-    private ResultsAPIContext(ResultUrl url, String viewkey) {
+    public ResultsAPIContext(String url, String viewkey) {
+        this(new ResultUrl(url), viewkey);
+    }
+
+    public ResultsAPIContext(ResultUrl url, String viewkey) {
         this.url = url;
         this.viewkey = viewkey;
     }
 
-    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey) {
-        if (context_ != null)
-            throw new RuntimeException("Invaild call of Context.init(...)");
-        context_ = new ResultsAPIContext(url, viewkey);
-        return context_;
-    }
-
-    public static ResultsAPIContext instance() {
-        return context_;
-    }
+//    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey) {
+//        if (context_ != null)
+//            throw new RuntimeException("Invaild call of Context.init(...)");
+//        context_ = new ResultsAPIContext(url, viewkey);
+//        return context_;
+//    }
+//
+//    public static ResultsAPIContext instance() {
+//        return context_;
+//    }
 
     public ResultUrl getUrl() {
         return url;

@@ -19,13 +19,13 @@ public class Details extends ResultsAPI {
 //        System.out.format("Size: \t\t\t%s \n", result.getViewPortSize());
 //        System.out.format("Match level: \t\t%s \n", result.getMatchLevel());
 //
-//        System.out.format("Test result: \t\t%s \n", result.isNew() ? "New" : result.isPassed() ? "Passed" : "Failed");
+//        System.out.format("Test result: \t\t%s \n", result.isNew() ? "New" : result.isPassed() ? "Matched" : "Failed");
 //        BaselineInfo bi = BaselineInfo.get(getUrl(), viewKey, result);
 //        System.out.format("Last updated by: \t%s \n", bi.getLastUpdatedBy() == null ? "Information unavailable" : bi.getLastUpdatedBy());
 //        System.out.format("Last updated at: \t%s \n", bi.getLastUpdated() == null ? "Information unavailable" : bi.getLastUpdated());
 //        if (stepResults) {
 //            System.out.println("--Step results--");
-//            StepResult[] stepsResults = result.getStepsResults();
+//            Result[] stepsResults = result.getStepsResults();
 //            for (int i = 0; i < stepsResults.length; ++i) {
 //                System.out.format("[Step %s] - %s \n", i + 1, stepsResults[i].toString());
 //            }

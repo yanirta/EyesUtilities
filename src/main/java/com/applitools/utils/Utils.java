@@ -54,9 +54,9 @@ public class Utils {
         clipboard.setContents(strSel, null);
     }
 
-    public static void saveImage(String imageUrl, String destinationFile) throws IOException {
+    public static void saveImage(String imageUrl, File destinationFile) throws IOException {
         try {
-            FileUtils.copyURLToFile(new URL(imageUrl), new File(destinationFile));
+            FileUtils.copyURLToFile(new URL(imageUrl), destinationFile);
         } catch (IOException e) {
             System.out.printf("Unable to process image from %s to %s \n Error text: %s",
                     imageUrl,

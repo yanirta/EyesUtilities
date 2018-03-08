@@ -1,6 +1,6 @@
 package com.applitools.obj;
 
-public enum TestStatus {
+public enum Status {
     Passed,
     Failed,
     Unresolved,
