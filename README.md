@@ -1,23 +1,28 @@
 # EyesUtilities [ ![Download](https://api.bintray.com/packages/applitoolseyes/generic/EyesUtilities/images/download.svg)](https://bintray.com/applitoolseyes/generic/download_file?file_path=EyesUtilities.jar)
-Eyes utilities is a Java CLI tool provides extended API features for Applitools Eyes.  
-This tool based on the assumption that you already have tests with Applitools
-and you want to gather more information about your test results via the API.
+Eyes Utilities is a Java based CLI tool to extend Applitools capabilities by communicating directly to Applitools API.
+Using EyesUtilities it is possible to generate customized offline reports, perform administration operations,
+generate playback and diff animations, download test diffs and original images and perform operations between branches.
 
-If you still don't have your Applitools account,
-you can start by going to the[Applitools website](https://applitools.com).  
-To quickly get on-board go to[the getting started tutorial](https://applitools.com/resources/tutorial).  
-Another tool that will assist you achieve the goal of quickly running tests with
-Applitools is the Web-Tester standalone executor, that can be found[here](https://github.com/yanirta/WebTester).
+### Prerequisites
+* Applitools account. If you still don't have your Applitools account,
+you can start your trial by going to the [Applitools website](https://applitools.com).  
+*To quickly get on-board go to [the getting started tutorial](https://applitools.com/resources/tutorial).  
+*If you already have Applitools account but can't find proper tool, try the [Webtester here](https://github.com/yanirta/WebTester).
+* For many listed operations, an additional set of keys will be required.
+To get your keys please contact our support at [support@applitools.com](mailto:support@applitools.com).
 
-Note that for the most api functions there is a need in specialty enterprise api keys.
-To get your keys please contact our support at[support@applitools.com](mailto:support@applitools.com).
-
-The general syntax is derived from the fact that the EyesUtilities tool is built in Java.  
+The general syntax is derived from the fact that the EyesUtilities is built in Java.  
 As a result every cli call should start with:
 >Java -jar EyesUtilities.jar [command] [command specific parametes...]
 
-To run in each one of the mode see the following sections.
-## Supported Modes
+## Appendix
+* [Generate steps animation](#generate-steps-animation)
+* [Generate test playback](#generate-test-playback)
+* [Download test diffs](#download-test-diffs)
+* [Download test images](#download-test-images)
+* [Generating batch(es) Report](#generating-batches-Report)
+* [Administration](#administration)
+* [Copy branch](#copy-branch)
 
 ### Generate steps animation
 This command will generate a set of animated gifs for each failing step inside the provided test.
@@ -87,22 +92,6 @@ Syntax:
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
 
-### Copy branch
-This command performs branch merging using copy with special flags.
-
-Syntax:
-> java -jar EyesUtilities.jar copybranch -k [BranchKey] -s [SourceBranch] -a [AppName] <[optional params]> 
-
-+ Required parameters:
-    + `-k [BranchKey]` - Your enterprise branch management api key.
-    + `-s [SourceBranch]` - Source branch name
-    + `-a [AppName]` - Application name in branch
-+ Optional parameters:
-    + `-t [TargetBranch]` - Target branch for merge
-    + `-o` - Force overwrite in case of conflict
-    + `-all` - Copy all including unchanged steps.
-    + `-d` - Delete the source branch after successful copy.
-    
 ### Generating batch(es) Report
 This command will generate an offline report of provided Applitools' results url(s),
 based on a provided template.
@@ -224,6 +213,98 @@ Here is the partial list of parameters that are exposed for usage in template co
 A complete example of a template can be found in[./Report/report.templ](https://github.com/yanirta/EyesUtilities/blob/master/Report/report.templ)  
 This example generates html report but the same idea can be applied on any textual format.
 
+### Administration
+Perform Admin operations on teams and users in organization.
+Before starting, make sure you have Server/Org admin account.
+
+General syntax:
+> java -jar EyesUtilities.jar Admin <Subcommand> <[Subcommand params]>
+
+##### Sub commands
++ getId - Get the user id of Server/Org admin. 
+This command is only applicable for LDAP SSO servers.
+As an alternative User-id field can be found in the cookies after a successful authentication.
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin getId -un [username] -up [userpass] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-up [userpass]` - Server/Org admin password
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
++ getTeams - List all teams in organization's account
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin getTeams -un [username] -ui [user-id] -or [org-id] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-ui [user-id]` - User id
+        +   `-or [org-id]` - Organization id*
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
++ getUsers - List all users in a team
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin getUsers -un [username] -ui [user-id] -or [org-id] -ti [team-id] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-ui [user-id]` - User id
+        +   `-or [org-id]` - Organization id*
+        +   `-ti [team-id]` - Team id
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
++ addTeam - Add team to organization's account
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin addTeam -un [username] -ui [user-id] -or [org-id] -tn [team-name] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-ui [user-id]` - User id
+        +   `-or [org-id]` - Organization id*
+        +   `-tn [team-name]` - The name of the new team
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
++ addUser - Add user to a team
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin addUser -un [username] -ui [user-id] -or [org-id] -ti [team id] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-ui [user-id]` - User id
+        +   `-or [org-id]` - Organization id*
+        +   `-ti [team-id]` - Team id
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-ne [newUserEmail]` - The email of the new user. Required if the user is new to the account.
+        +   `-ni [newUserId]` - The user-id of the new user, default: same as the newUserEmail.
+        +   `-nn [newUserName]` - The full name of the new user, default: extracted from the newUserEmail (the part before the '@').
+        +   `-ve` - Set permission to viewer, default: false
+        +   `-ad` - Set permission to team admin, default: false
++ remUser - Remove user from a team or from organization
+    + Syntax:
+    > java -jar EyesUtilities.jar Admin remUser -un [username] -ui[user-id] -or [org-id] -ri [remove-user-id] <[optional params]>
+    + Required parameters:
+        +   `-un [username]` - Server/Org admin username
+        +   `-ui [user-id]` - User id
+        +   `-or [org-id]` - Organization id*
+        +   `-ri [remove-user-id]` - The id of the user to be removed
+    + Optional parameters:
+        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-ti [team-id]` - Team id, if set will only be omitted from the team
+        
+        
+          * Organization id (orgId) field can be found as one of the url parameters in the admin/manage panel.
+### Copy branch
+Perform branch merging using copy with additional options.
+
+Syntax:
+> java -jar EyesUtilities.jar copybranch -k [BranchKey] -s [SourceBranch] -a [AppName] <[optional params]> 
+
++ Required parameters:
+    + `-k [BranchKey]` - Your enterprise branch management api key
+    + `-s [SourceBranch]` - Source branch name
+    + `-a [AppName]` - Application name in branch
++ Optional parameters:
+    + `-t [TargetBranch]` - Target branch for merge
+    + `-o` - Force overwrite in case of conflict
+    + `-all` - Copy all including unchanged steps
+    + `-d` - Delete the source branch after successful copy
+    
 ##Resources
 + [Applitools website](https://applitools.com)
 + [Web-Tester](https://github.com/yanirta/WebTester)

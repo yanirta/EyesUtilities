@@ -27,6 +27,15 @@ import java.util.*;
 import java.util.List;
 
 public class Utils {
+    public static <T> T selectNotNull(T... vars) {
+        T t = null;
+        for (T var : vars)
+            if (var != null)
+                if (t != null) return null;
+                else t = var;
+        return t;
+    }
+
 
     public static <T extends Enum<T>> T parseEnum(Class<T> c, String string) {
         if (c != null && string != null) {
