@@ -97,7 +97,7 @@ This command will generate an offline report of provided Applitools' results url
 based on a provided template.
 The default name and the location of the template is `./report.teml`.
 
-<img src="https://user-images.githubusercontent.com/6667420/34467334-234b0e4a-eef7-11e7-925b-85ec5224e883.png"  width="550">  
+<img src="https://user-images.githubusercontent.com/6667420/37169255-1196032e-2310-11e8-87da-aa6a3174da72.png"  width="550">  
 
 Syntax:
 > java -jar EyesUtilities.jar report -k [EntKey] <[optional params]> [ResultUrls]
