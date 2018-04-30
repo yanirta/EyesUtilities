@@ -6,8 +6,8 @@ generate playback and diff animations, download test diffs and original images a
 ### Prerequisites
 * Applitools account. If you still don't have your Applitools account,
 you can start your trial by going to the [Applitools website](https://applitools.com).  
-*To quickly get on-board go to [the getting started tutorial](https://applitools.com/resources/tutorial).  
-*If you already have Applitools account but can't find proper tool, try the [Webtester here](https://github.com/yanirta/WebTester).
+    * To quickly get on-board go to [the getting started tutorial](https://applitools.com/resources/tutorial).  
+    * If you already have Applitools account but can't find proper tool, try the [Webtester here](https://github.com/yanirta/WebTester).
 * For many listed operations, an additional set of keys will be required.
 To get your keys please contact our support at [support@applitools.com](mailto:support@applitools.com).
 
@@ -110,7 +110,7 @@ Syntax:
     + `-t [FilePath]` - Set report template file. Default `./report.templ`
     + `-rt [title]` - Set the title of the report
     
-#####Template syntax:
+##### Template syntax:
 The engine lies beneath this report generation is based on [Velocity framework]() which widely used in MVC frameworks to implement web-apps.
 A template can be constructed with parameters and simple logic using VTL(Velocity Template Language), which's full syntax reference can be found [here](http://velocity.apache.org/engine/1.7/vtl-reference.html).   
 
@@ -305,7 +305,7 @@ Syntax:
     + `-all` - Copy all including unchanged steps
     + `-d` - Delete the source branch after successful copy
     
-##Resources
+## Resources
 + [Applitools website](https://applitools.com)
 + [Web-Tester](https://github.com/yanirta/WebTester)
 + [Image-Tester](https://github.com/yanirta/ImageTester)
