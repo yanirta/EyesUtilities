@@ -49,7 +49,7 @@ public class Batches extends ArrayList<BatchInfo> {
         for (BatchInfo batchInfo : this) {
             totalTests += batchInfo.getTotalTests();
             testsPassed += batchInfo.getTestsPassed();
-            testsFailed += batchInfo.getTestsPassed();
+            testsFailed += batchInfo.getTestsFailed();
             testsUnresolved += batchInfo.getTestsUnresolved();
             testsRunning += batchInfo.getTestsRunning();
             testsAborted += batchInfo.getTestsAborted();

@@ -3,7 +3,9 @@ package com.applitools.obj;
 import javafx.scene.shape.Path;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Console;
 import java.io.File;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -41,9 +43,12 @@ public class PathGenerator {
         String pathTempl = new String(path_template);
         String fileTempl = new String(file_template);
         for (Map.Entry<String, String> token : tokens.entrySet()) {
-            pathTempl = pathTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), token.getValue());
-            fileTempl = fileTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), token.getValue());
+            if (token.getValue() == null) continue;
+            String value = Matcher.quoteReplacement(token.getValue());
+            pathTempl = pathTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), value);
+            fileTempl = fileTempl.replaceAll(String.format(PARAM_TEMPLATE_REGEX, token.getKey()), value);
         }
+        //System.out.printf("Building path: %s \n", pathTempl);
         return new PathGenerator(pathTempl, fileTempl);
     }
 
@@ -58,8 +63,9 @@ public class PathGenerator {
     public File generateFile() {
         if (StringUtils.isEmpty(file_template)) throw new RuntimeException("file_template is empty");
         File pwd = new File(System.getProperty("user.dir"));
+        java.nio.file.Path normalize = Paths.get(path_template).normalize();
         return new File(
-                pwd.toURI().relativize(new File(path_template, file_template).toURI()).getPath()
+                pwd.toURI().relativize(new File(normalize.toString(), file_template).toURI()).getPath()
         );
     }
 

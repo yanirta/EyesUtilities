@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription = "Print the version and more details about the tool")
 public class Version implements Command {
-    private String version = "0.99";
+    private String version = "1.00";
 
     @Override
     public void run() throws Exception {
@@ -12,8 +12,8 @@ public class Version implements Command {
                 "EyesUtilities for Applitools Eyes\n" +
                         "Version: %s \n" +
                         "Author: Yanir Taflev \n" +
-                        "Created in 2017 \n" +
-                        "A courtesy of the APAC/AMEA Customer Success team!\n"
+                        "Created in 2016 \n" +
+                        "Courtesy of the APAC/AMEA Customer Success team!\n"
                 , version);
     }
 }
