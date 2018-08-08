@@ -12,6 +12,8 @@ public class ExpectedStepResult {
     private Object matchSettings;
     private String OccurredAt;
     private Object appEnvironment;
+    private String defaultMatchLevel;
+    private String state;
 
     public String getTag() {
         return Tag;
@@ -95,5 +97,21 @@ public class ExpectedStepResult {
 
     private String getImageId(HashMap imageRecord) {
         return imageRecord.get("id").toString();
+    }
+
+    public String getDefaultMatchLevel() {
+        return defaultMatchLevel;
+    }
+
+    public void setDefaultMatchLevel(String defaultMatchLevel) {
+        this.defaultMatchLevel = defaultMatchLevel;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }
