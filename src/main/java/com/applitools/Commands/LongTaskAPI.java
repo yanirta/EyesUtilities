@@ -14,7 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 
-public abstract class LongTaskAPI implements Command {
+public abstract class LongTaskAPI extends CommandBase {
     private static final String LOCATION_HEADER = "Location";
     private static ObjectMapper mapper = new ObjectMapper();
 

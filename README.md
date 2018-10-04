@@ -38,6 +38,7 @@ Syntax:
 + Optional parameters:
     + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
     + `-d [pathTmpl]` - Specify destination path template.
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
     default: 
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
@@ -54,6 +55,8 @@ Syntax:
 + Optional parameters:
     + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
     + `-d [pathTmpl]` - Specify destination path template.
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+
     default: 
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
@@ -71,6 +74,8 @@ Syntax:
 + Optional parameters:
     + `-i [mSecs]` - Transition interval between the images in milliseconds. default: 1000
     + `-d [pathTmpl]` - Specify destination path template.
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+
     default: 
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
@@ -88,6 +93,8 @@ Syntax:
     + `-a` - Flag to download only actuals
     + `-b` - Flag to download only baselines
     + `-d [pathTmpl]` - Specify destination path template.
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+
     default: 
         >{workdir_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}
         + Available path template parameters: user_root, workdir_root, batch_id, test_id, test_name, batch_name, app_name, os, hostapp, viewport, branch_name, step_index, step_tag, artifact_type, file_ext
@@ -109,6 +116,7 @@ Syntax:
     + `-d [FolderPath]` - Set custom report output destination. Default: `'.'`
     + `-t [FilePath]` - Set report template file. Default `./report.templ`
     + `-rt [title]` - Set the title of the report
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
     
 ##### Template syntax:
 The engine lies beneath this report generation is based on [Velocity framework]() which widely used in MVC frameworks to implement web-apps.
@@ -231,6 +239,8 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-up [userpass]` - Server/Org admin password
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+
 + getTeams - List all teams in organization's account
     + Syntax:
     > java -jar EyesUtilities.jar Admin getTeams -un [username] -ui [user-id] -or [org-id] <[optional params]>
@@ -240,6 +250,7 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-or [org-id]` - Organization id*
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + getUsers - List all users in a team
     + Syntax:
     > java -jar EyesUtilities.jar Admin getUsers -un [username] -ui [user-id] -or [org-id] -ti [team-id] <[optional params]>
@@ -250,6 +261,7 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-ti [team-id]` - Team id
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + addTeam - Add team to organization's account
     + Syntax:
     > java -jar EyesUtilities.jar Admin addTeam -un [username] -ui [user-id] -or [org-id] -tn [team-name] <[optional params]>
@@ -260,6 +272,7 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-tn [team-name]` - The name of the new team
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + addUser - Add user to a team
     + Syntax:
     > java -jar EyesUtilities.jar Admin addUser -un [username] -ui [user-id] -or [org-id] -ti [team id] <[optional params]>
@@ -275,6 +288,7 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-nn [newUserName]` - The full name of the new user, default: extracted from the newUserEmail (the part before the '@').
         +   `-ve` - Set permission to viewer, default: false
         +   `-ad` - Set permission to team admin, default: false
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.        
 + remUser - Remove user from a team or from organization
     + Syntax:
     > java -jar EyesUtilities.jar Admin remUser -un [username] -ui[user-id] -or [org-id] -ri [remove-user-id] <[optional params]>
@@ -286,6 +300,7 @@ As an alternative User-id field can be found in the cookies after a successful a
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
         +   `-ti [team-id]` - Team id, if set will only be omitted from the team
+        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
         
         
           * Organization id (orgId) field can be found as one of the url parameters in the admin/manage panel.
@@ -304,6 +319,7 @@ Syntax:
     + `-o` - Force overwrite in case of conflict
     + `-all` - Copy all including unchanged steps
     + `-d` - Delete the source branch after successful copy
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
     
 ## Resources
 + [Applitools website](https://applitools.com)

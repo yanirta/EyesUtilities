@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Parameters(commandDescription = "Manage users and teams on the server")
-public class Admin implements Command {
+public class Admin extends CommandBase {
     private static final String GETID = "getId";
     private static final String GETTEAMS = "getTeams";
     private static final String GETUSERS = "getUsers";

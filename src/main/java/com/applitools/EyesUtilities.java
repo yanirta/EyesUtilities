@@ -11,7 +11,6 @@ public class EyesUtilities {
     private Parse parser = new Parse();
     private DownloadDiffs downloadDiffs = new DownloadDiffs();
     private DownloadImages downloadImages = new DownloadImages();
-    private Details detailedReport = new Details(); //TODO remove
     private Report report = new Report();
     private CopyBranch copyBranch = new CopyBranch();
     private AnimatedDiffs animatedDiffs = new AnimatedDiffs();
@@ -26,8 +25,13 @@ public class EyesUtilities {
 
         try {
             main.run(jc, args);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Throwable e) {
+            if (!e.getMessage().isEmpty())
+                System.out.println(e.getMessage());
+            else{//Gets more messy
+                e.printStackTrace();
+            }
+
             jc.usage(jc.getParsedCommand());
         }
     }
@@ -42,7 +46,6 @@ public class EyesUtilities {
         jc.addCommand("parse", parser);
         jc.addCommand("diffs", downloadDiffs);
         jc.addCommand("images", downloadImages);
-        jc.addCommand("details", detailedReport);
         jc.addCommand("report", report);
         jc.addCommand("copybranch", copyBranch);
         jc.addCommand("anidiffs", animatedDiffs);
@@ -58,7 +61,10 @@ public class EyesUtilities {
 
         Command command = (Command) jc.getCommands().get(jc.getParsedCommand()).getObjects().get(0);
 
-        command.run();
+        if (command instanceof CommandBase)
+            ((CommandBase) command).Execute();
+        else
+            command.run();
 
         //TODO Migrate test
         //TODO deep search in many batches

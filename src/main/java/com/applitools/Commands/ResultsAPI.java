@@ -7,7 +7,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ResultsAPI implements Command {
+public abstract class ResultsAPI extends CommandBase {
     @Parameter(description = "<result url(s)>", required = true)
     private List<String> urls;
 

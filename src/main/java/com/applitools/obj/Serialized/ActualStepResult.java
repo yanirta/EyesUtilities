@@ -19,6 +19,7 @@ public class ActualStepResult {
     private Boolean IsPrimary;
     private String ExpectedImageId;
     private String expectedThumbprintId;
+    private Boolean wasDomUsed;
 
     public Boolean getIsPrimary() {
         return IsPrimary;
@@ -134,5 +135,13 @@ public class ActualStepResult {
 
     private String getImageId(HashMap imageRecord) {
         return imageRecord.get("id").toString();
+    }
+
+    public Boolean getWasDomUsed() {
+        return wasDomUsed;
+    }
+
+    public void setWasDomUsed(Boolean wasDomUsed) {
+        this.wasDomUsed = wasDomUsed;
     }
 }
