@@ -21,8 +21,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="eyes-utilities" target="1.5" />
-      <module name="EyesUtilities" target="1.5" />
+      <module name="EyesUtilities" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,7 +1,10 @@
 package com.applitools.obj.Serialized;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.util.HashMap;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExpectedStepResult {
     private String Tag;
     private HashMap Image;
