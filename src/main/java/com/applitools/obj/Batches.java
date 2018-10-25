@@ -6,6 +6,7 @@ import com.applitools.obj.Serialized.BatchInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Batches extends ArrayList<BatchInfo> {
     //Batches
@@ -36,8 +37,28 @@ public class Batches extends ArrayList<BatchInfo> {
     private int stepsMissing = 0;
 
     public Batches(List<String> urls, String viewKey, PathGenerator pathGenerator) throws IOException {
+        //Next is the logic to allow different ways to input multiple results, supporting variations of url, result urls and batch-ids
+        Optional<String> first = urls.stream().filter((str) -> ResultUrl.isResultURL(str)).findFirst();
+        ResultUrl resUrl = null;
+        String serverUrl = null;
+        if (first.isPresent()) resUrl = new ResultUrl(first.get());
+        else {
+            first = urls.stream().filter((str) -> ResultUrl.isServerUrl(str)).findFirst();
+            if (first.isPresent()) serverUrl = first.get();
+            else throw new RuntimeException("At least one full result or server url is required");
+        }
+
         for (String url : urls) {
-            ResultsAPIContext context = new ResultsAPIContext(url, viewKey);
+            if (ResultUrl.isResultURL(url))
+                resUrl = new ResultUrl(url);
+            else if (ResultUrl.isResultId(url) && resUrl != null)
+                resUrl = new ResultUrl(resUrl.getServerAddress(), url);
+            else if (ResultUrl.isResultId(url) && serverUrl != null)
+                resUrl = new ResultUrl(serverUrl, url);
+            else if (ResultUrl.isServerUrl(url)) continue;
+            else throw new RuntimeException("Unexpected error!");
+
+            ResultsAPIContext context = new ResultsAPIContext(resUrl, viewKey);
             BatchInfo batchInfo = BatchInfo.get(context, pathGenerator);
             if (batchInfo != null) this.add(batchInfo);
         }
