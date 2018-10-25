@@ -111,7 +111,7 @@ Syntax:
 
 + Required parameters:
     + `-k [EntKey]` - Your Enterprise api read key.
-    + `[ResultUrls]` - Space separated Applitools batch urls.
+    + `[results]` - Any combination of full result urls and/or batch id's. If only batch-id's provided, a server url must appear once in the list.
 + Optional parameters:
     + `-d [FolderPath]` - Set custom report output destination. Default: `'.'`
     + `-t [FilePath]` - Set report template file. Default `./report.templ`
