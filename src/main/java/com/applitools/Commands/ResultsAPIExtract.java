@@ -30,7 +30,7 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
     public void run() throws Exception {
         ResultUrl resultUrl = getUrl();
         ResultsAPIContext ctx = new ResultsAPIContext(resultUrl, viewKey);
-        PathGenerator generator = new PathGenerator(destination).build(getPathParams());
+        PathGenerator generator = new PathGenerator(destination).build(getParams());
         if (resultUrl.getSessionId() != null) {
             //Just one test
             TestInfo testInfo = mapper.readValue(ctx.getTestApiUrl(), TestInfo.class);
@@ -52,7 +52,8 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
         } else return;//TODO except
     }
 
-    private Map<String, String> getPathParams() {
+    @Override
+    protected HashMap<String, String> getParams() {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("user_root", new File(System.getProperty("user.dir")).getAbsolutePath());
         params.put("workdir_root", new File("").getAbsolutePath());

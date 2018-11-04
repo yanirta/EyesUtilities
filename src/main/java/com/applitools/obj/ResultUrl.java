@@ -10,7 +10,7 @@ public class ResultUrl {
     //TODO consider http
     private static final String RESULT_RGX = "^http(s?):\\/\\/(?<serverURL>.+)\\/app\\/(sessions|batches|test-results)\\/(?<batchId>\\d+)\\/?(?<sessionId>\\d+)?.*$";
     private static final String SERVER_URL_RGX = "^(http(s?):\\/\\/)?(?<serverURL>.+)\\/?$";
-    private static final String ID_RGX = "^[a-zA-Z0-9]+$";
+    private static final String ID_RGX = "^\\d+$";
     private static final Pattern RESULT_PTRN = Pattern.compile(RESULT_RGX);
     private static final Pattern ID_PTRN = Pattern.compile(ID_RGX);
     private static final Pattern SERVER_URL_PTRN = Pattern.compile(SERVER_URL_RGX);

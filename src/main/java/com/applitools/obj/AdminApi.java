@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class AdminApi {
-    public static final String GENERAL_API = "https://%s/api/admin/%s?format=json&userName=%s&userId=%s";
     private static final ObjectMapper mapper = new ObjectMapper();
+    public static final String GENERAL_API = "https://%s/api/admin/%s?format=json&userName=%s&userId=%s";
     private static final String ACCOUNTS_API = "orgs/%s/accounts";
     private static final String USERS_API = "orgs/%s/users/%s";
     private static final String LOGIN_API = "https://%s/api/auth/login?format=json&username=%s&password=%s";

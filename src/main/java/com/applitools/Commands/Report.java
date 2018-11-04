@@ -19,8 +19,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 @Parameters(commandDescription = "Prepare report based on a template")
-
 public class Report extends ResultsAPI {
+    private PathGenerator pathGen = new PathGenerator("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
 
     @Parameter(names = {"-t", "--template"}, description = "Template file.")
     private String templFileName = "report.templ";
@@ -32,8 +32,6 @@ public class Report extends ResultsAPI {
     private String reportTitle = "";
 
     private File templFile = null;
-
-    private PathGenerator outPathGenerator = new PathGenerator("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
 
     public void run() throws Exception {
         templFile = new File(templFileName);
@@ -68,7 +66,8 @@ public class Report extends ResultsAPI {
         return sw;
     }
 
-    private HashMap<String, String> getSelfPathParams() {
+    @Override
+    protected HashMap<String, String> getParams() {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("report_root", new File(reportoutfile).getAbsoluteFile().getParentFile().getPath());
         params.put("user_root", new File(System.getProperty("user.dir")).getAbsolutePath());
@@ -78,9 +77,8 @@ public class Report extends ResultsAPI {
     }
 
     private VelocityContext createContext() throws IOException {
-        PathGenerator baseGenerator = outPathGenerator.build(getSelfPathParams());
         VelocityContext context = new VelocityContext();
-        Batches batches = new Batches(getUrls(), viewKey, baseGenerator);
+        Batches batches = getBatches(pathGen);
         if (batches.size() == 0) return null;
         context.internalPut("batches", batches);
         context.internalPut("numberTool", new NumberTool());
