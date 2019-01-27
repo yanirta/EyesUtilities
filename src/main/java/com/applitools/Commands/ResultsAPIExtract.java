@@ -35,6 +35,7 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
             //Just one test
             TestInfo testInfo = mapper.readValue(ctx.getTestApiUrl(), TestInfo.class);
             testInfo.setPathGenerator(generator);
+            testInfo.setContext(ctx);
             runPerTest(testInfo);
         } else if (resultUrl.getBatchId() != null) {
             //Url contains batch

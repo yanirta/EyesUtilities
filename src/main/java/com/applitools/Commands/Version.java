@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription = "Print the version and more details about the tool")
 public class Version implements Command {
-    private String version = "1.0.6";
+    private String version = "1.0.6.1";
 
     @Override
     public void run() throws Exception {

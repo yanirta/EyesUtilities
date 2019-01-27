@@ -90,6 +90,14 @@ public class ExpectedStepResult {
         this.appEnvironment = appEnvironment;
     }
 
+    public Object getEnv() {
+        return appEnvironment;
+    }
+
+    public void setEnv(Object appEnvironment) {
+        this.appEnvironment = appEnvironment;
+    }
+
     public String getImageId() {
         return getImageId(Image);
     }
