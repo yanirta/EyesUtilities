@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class Query {
     //private static final String GET_STORED_BATCH_INFO_ID_TMPL = "https://%s/api/sessions/batches/batchId/%s?format=json&ApiKey=%s";
     private static final String GET_STORED_BATCH_INFO_ID_TMPL = "https://%s/api/sessions/batches/batchId/%s?format=json&userName=%s&userId=%s";
-    private static final String QUERY_TMPL_REGEX = "^(?<op>\\w+):(?<phrase>[a-zA-Z0-9,_-]+,?)$";
+    private static final String QUERY_TMPL_REGEX = "^(?<op>\\w+):(?<phrase>[a-zA-Z0-9,_\\-\\.]+,?)$";
     private static final Pattern QUERY_PTRN = Pattern.compile(QUERY_TMPL_REGEX);
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -37,6 +37,7 @@ public class Query {
         userId_ = userId;
         if (!matcher_.find())
             throw new RuntimeException(String.format("Invalid syntax, query: %s \n", query));
+
         serverUrl_ = serverUrl;
         //viewKey_ = viewKey;
         operation_ = QUERY_OPS.valueOf(matcher_.group("op"));

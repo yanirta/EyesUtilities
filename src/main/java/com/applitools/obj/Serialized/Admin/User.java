@@ -6,6 +6,7 @@ public class User {
     String fullName;
     String sessionId;
     String lastSessionStartedAt;
+    String addedAt;
 
     public User() {
     }
@@ -54,6 +55,14 @@ public class User {
 
     public void setLastSessionStartedAt(String lastSessionStartedAt) {
         this.lastSessionStartedAt = lastSessionStartedAt;
+    }
+
+    public String getAddedAt() {
+        return addedAt;
+    }
+
+    public void setAddedAt(String addedAt) {
+        this.addedAt = addedAt;
     }
 
 }

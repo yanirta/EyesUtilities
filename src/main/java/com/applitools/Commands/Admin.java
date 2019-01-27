@@ -36,14 +36,14 @@ public class Admin extends CommandBase {
     private abstract class AdminSubCommand implements Command {
         @Parameter(names = {"-as", "--server"}, description = "Applitools server url")
         protected String server = "eyes.applitools.com";
-        @Parameter(names = {"-un", "--username"}, required = true)
+        @Parameter(names = {"-un", "--username"}, description = "Agent UserName for the operation",required = true)
         protected String user;
     }
 
     private abstract class AdminOrgSubCommand extends AdminSubCommand {
         @Parameter(names = {"-or", "--orgId"}, description = "Organization id as it appears in your urls", required = true)
         protected String orgId;
-        @Parameter(names = {"-ui", "--userId"}, description = "User id as it was extracted from getId command", required = true)
+        @Parameter(names = {"-ui", "--userId"}, description = "Agent UserId as it was extracted from getId command for the operation", required = true)
         protected String userId;
     }
 
@@ -129,7 +129,7 @@ public class Admin extends CommandBase {
         private List<String> newUserName;
         @Parameter(names = {"-ve", "--viewer"}, description = "Set permissions to viewer")
         private boolean isViewer = false;
-        @Parameter(names = {"-ad", "admin"}, description = "Set permissions to team-admin")
+        @Parameter(names = {"-ad", "--admin"}, description = "Set permissions to team-admin")
         private boolean isAdmin = false;
 
         @Override
@@ -146,7 +146,7 @@ public class Admin extends CommandBase {
                 if (newUserEmail==null)
                     throw new RuntimeException("Email required!"); //New user require email field
                 if (newUserId == null)
-                    newUserId = newUserEmail;//Decucing userid from email
+                    newUserId = newUserEmail;//Deducing userid from email
                 if (newUserName == null) { //Deducing username from email
                     newUserName = new ArrayList<>();
                     String[] emailparts = newUserEmail.split("@");
