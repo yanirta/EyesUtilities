@@ -2,6 +2,7 @@ package com.applitools.obj;
 
 import com.applitools.obj.Serialized.Admin.Account;
 import com.applitools.obj.Serialized.Admin.User;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -13,7 +14,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -21,61 +21,40 @@ import java.util.Optional;
 
 public class AdminApi {
     private static final ObjectMapper mapper = new ObjectMapper();
-    public static final String GENERAL_API = "https://%s/api/admin/%s?format=json&userName=%s&userId=%s";
-    private static final String ACCOUNTS_API = "orgs/%s/accounts";
+    public static final String GENERAL_API = "https://%s/api/admin/%s?format=json&apiKey=%s";
+    private static final String ACCOUNTS_API = "orgs/%s/accounts/%s";
     private static final String USERS_API = "orgs/%s/users/%s";
     private static final String LOGIN_API = "https://%s/api/auth/login?format=json&username=%s&password=%s";
     private final String server_;
-    private final String username_;
-    private final String userId_;
     private final String orgId_;
-
+    private final String apiKey_;
     private User[] users;
 
+    public AdminApi(String server, String orgId, String apiKey) {
+        this.server_ = server;
+        this.apiKey_ = apiKey;
+        this.orgId_ = orgId;
+    }
+
+    public String getApiKey() {
+        return apiKey_;
+    }
 
     public String getServer() {
         return server_;
-    }
-
-    public String getUsername() {
-        return username_;
-    }
-
-    public String getUserId() {
-        return userId_;
     }
 
     public String getOrgId() {
         return orgId_;
     }
 
-    public AdminApi(String orgId, String username, String userId) throws MalformedURLException {
-        this("https://eyes.applitools.com", orgId, username, userId);
-    }
-
-    public AdminApi(String server, String orgId, String username, String userId) {
-        this.server_ = server;
-        this.username_ = username;
-        this.userId_ = userId;
-        this.orgId_ = orgId;
-    }
-
-    public static String getUserId(String server, String username, String password) throws IOException {
-        String login = String.format(LOGIN_API, server, username, password);
-        List<Cookie> cookies = get(login);
-        for (Cookie cookie : cookies)
-            if (cookie.getName().compareTo("user-id") == 0)
-                return cookie.getValue();
-        return null;
-    }
-
     public Account[] getAccounts() throws IOException {
-        String accounts = String.format(ACCOUNTS_API, orgId_);
-        accounts = String.format(GENERAL_API, server_, accounts, username_, userId_);
-        Account[] retaccounts = mapper.readValue(new URL(accounts), Account[].class);
-        for (Account acc : retaccounts) {
+        String accounts = constructUrl(ACCOUNTS_API, orgId_, "");
+        HttpResponse response = get(accounts).getResponse();
+        Account[] retaccounts = mapper.readValue(response.getEntity().getContent(), Account[].class);
+        for (Account acc : retaccounts)
             acc.setAdminApi(this);
-        }
+
         return retaccounts;
     }
 
@@ -90,8 +69,7 @@ public class AdminApi {
     }
 
     public Account addAccount(Account account) throws IOException {
-        String accounts = String.format(ACCOUNTS_API, orgId_);
-        accounts = String.format(GENERAL_API, server_, accounts, username_, userId_);
+        String accounts = constructUrl(ACCOUNTS_API, orgId_, "");
         CloseableHttpResponse response = post(accounts, account);
         try {
             InputStream content = post(accounts, account).getEntity().getContent();
@@ -101,9 +79,13 @@ public class AdminApi {
         }
     }
 
+    public void updateAccount(Account account) throws IOException {
+        String accounts = constructUrl(ACCOUNTS_API, orgId_, account.getId());
+        put(accounts, account);
+    }
+
     public void addUser(User user) throws IOException {
-        String users = String.format(USERS_API, orgId_, user.getId());
-        users = String.format(GENERAL_API, server_, users, username_, userId_);
+        String users = constructUrl(USERS_API, orgId_, user.getId());
         post(users, user);
     }
 
@@ -112,16 +94,15 @@ public class AdminApi {
     }
 
     public void removeUser(String userId) throws IOException {
-        String users = String.format(USERS_API, orgId_, userId);
-        users = String.format(GENERAL_API, server_, users, username_, userId_);
+        String users = constructUrl(USERS_API, orgId_, userId);
         delete(users);
     }
 
     public User[] getUsers() throws IOException {
         if (this.users != null) return users;
-        String users = String.format(USERS_API, orgId_, "");
-        users = String.format(GENERAL_API, server_, users, username_, userId_);
-        this.users = mapper.readValue(new URL(users), User[].class);
+        String users = constructUrl(USERS_API, orgId_, "");
+        HttpResponse response = get(users).getResponse();
+        this.users = mapper.readValue(response.getEntity().getContent(), User[].class);
         return this.users;
     }
 
@@ -148,10 +129,15 @@ public class AdminApi {
         request(delete);
     }
 
-    public static List<Cookie> get(String url) throws IOException {
+    public static HttpClientContext get(String url) throws IOException {
         HttpGet get = new HttpGet(url);
         HttpClientContext context = HttpClientContext.create();
         request(get, context);
+        return context;
+    }
+
+    public static List<Cookie> getCookies(String url) throws IOException {
+        HttpClientContext context = get(url);
         CookieStore cookieStore = context.getCookieStore();
         return cookieStore.getCookies();
     }
@@ -188,5 +174,11 @@ public class AdminApi {
         } catch (IOException e) {
             throw e;
         }
+    }
+
+    private String constructUrl(String api, String... args) {
+        String retUrl = String.format(api, (Object[]) args);
+        retUrl = String.format(GENERAL_API, server_, retUrl, this.apiKey_);
+        return retUrl;
     }
 }

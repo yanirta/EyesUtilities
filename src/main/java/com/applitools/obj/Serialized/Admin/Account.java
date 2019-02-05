@@ -10,8 +10,6 @@ import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
-    private static final String ACCOUNT_API = "accounts/%s";
-
     private String id;
     private String name;
     private HashMap<String, Subscriber> members;
@@ -62,25 +60,11 @@ public class Account {
 
     public void add(User user, boolean isViewer, boolean isAdmin) throws IOException {
         if (members.containsKey(user.id))
-            throw new RuntimeException("The user is already part of the team!");
+            throw new RuntimeException("The user is already in the team!");
 
         Subscriber subscriber = new Subscriber(user.id, isViewer, isAdmin);
-
-        String account = String.format(ACCOUNT_API, id);
-        account = String.format(AdminApi.GENERAL_API,
-                apiref_.getServer(),
-                account,
-                apiref_.getUsername(),
-                apiref_.getUserId());
-
         members.put(user.id, subscriber);
-
-        try {
-            AdminApi.put(account, this);
-        } catch (IOException e) {
-            members.remove(user.id);
-            throw e;
-        }
+        update();
     }
 
     public void remove(Subscriber subscriber) throws IOException {
@@ -92,29 +76,10 @@ public class Account {
             throw new RuntimeException("The user is not part of the team!");
         Subscriber revert = members.get(username);
         members.remove(username);
-
-        String account = String.format(ACCOUNT_API, id);
-        account = String.format(AdminApi.GENERAL_API,
-                apiref_.getServer(),
-                account,
-                apiref_.getUsername(),
-                apiref_.getUserId());
-        try {
-            AdminApi.put(account, this);
-        } catch (IOException e) {
-            members.put(username, revert);
-            throw e;
-        }
+        update();
     }
 
     public void update() throws IOException {
-        String account = String.format(ACCOUNT_API, id);
-        account = String.format(AdminApi.GENERAL_API,
-                apiref_.getServer(),
-                account,
-                apiref_.getUsername(),
-                apiref_.getUserId());
-
-        AdminApi.put(account, this);
+        apiref_.updateAccount(this);
     }
 }
