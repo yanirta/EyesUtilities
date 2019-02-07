@@ -226,37 +226,23 @@ Perform Admin operations on teams and users in organization.
 Before starting, make sure you have Server/Org admin account.
 
 General syntax:
-> java -jar EyesUtilities.jar Admin <Subcommand> <[Subcommand params]>
+> java -jar EyesUtilities.jar admin <Subcommand> <[Subcommand params]>
 
 ##### Sub commands
-+ getId - Get the user id of Server/Org admin. 
-This command is only applicable for LDAP SSO servers.
-As an alternative User-id field can be found in the cookies after a successful authentication.
-    + Syntax:
-    > java -jar EyesUtilities.jar Admin getId -un [username] -up [userpass] <[optional params]>
-    + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-up [userpass]` - Server/Org admin password
-    + Optional parameters:
-        +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
-        +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
-
 + getTeams - List all teams in organization's account
     + Syntax:
-    > java -jar EyesUtilities.jar Admin getTeams -un [username] -ui [user-id] -or [org-id] <[optional params]>
+    > java -jar EyesUtilities.jar admin getTeams -k [api-key] -or [org-id] <[optional params]>
     + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-ui [user-id]` - User id
+        +   `-k [api-key]` - An api key with organizational admin read permissions.
         +   `-or [org-id]` - Organization id*
     + Optional parameters:
         +   `-as [url]` - Applitools alternative server, default: eyes.applitools.com
         +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + getUsers - List all users in a team
     + Syntax:
-    > java -jar EyesUtilities.jar Admin getUsers -un [username] -ui [user-id] -or [org-id] -ti [team-id] <[optional params]>
+    > java -jar EyesUtilities.jar admin getUsers -k [api-key] -or [org-id] -ti [team-id] <[optional params]>
     + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-ui [user-id]` - User id
+        +   `-k [api-key]` - An api key with organizational admin read permissions.
         +   `-or [org-id]` - Organization id*
         +   `-ti [team-id]` - Team id
     + Optional parameters:
@@ -264,10 +250,9 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + addTeam - Add team to organization's account
     + Syntax:
-    > java -jar EyesUtilities.jar Admin addTeam -un [username] -ui [user-id] -or [org-id] -tn [team-name] <[optional params]>
+    > java -jar EyesUtilities.jar admin addTeam -k [api-key] -or [org-id] -tn [team-name] <[optional params]>
     + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-ui [user-id]` - User id
+        +   `-k [api-key]` - An api key with organizational admin write permissions.
         +   `-or [org-id]` - Organization id*
         +   `-tn [team-name]` - The name of the new team
     + Optional parameters:
@@ -275,10 +260,9 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
 + addUser - Add user to a team
     + Syntax:
-    > java -jar EyesUtilities.jar Admin addUser -un [username] -ui [user-id] -or [org-id] -ti [team id] <[optional params]>
+    > java -jar EyesUtilities.jar admin addUser -k [api-key] -or [org-id] -ti [team id] <[optional params]>
     + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-ui [user-id]` - User id
+        +   `-k [api-key]` - An api key with organizational admin read+write permissions.
         +   `-or [org-id]` - Organization id*
         +   `-ti [team-id]` - Team id
     + Optional parameters:
@@ -291,10 +275,9 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.        
 + remUser - Remove user from a team or from organization
     + Syntax:
-    > java -jar EyesUtilities.jar Admin remUser -un [username] -ui[user-id] -or [org-id] -ri [remove-user-id] <[optional params]>
+    > java -jar EyesUtilities.jar admin remUser -k [api-key] -or [org-id] -ri [remove-user-id] <[optional params]>
     + Required parameters:
-        +   `-un [username]` - Server/Org admin username
-        +   `-ui [user-id]` - User id
+        +   `-k [api-key]` - An api key with organizational admin read+write permissions.
         +   `-or [org-id]` - Organization id*
         +   `-ri [remove-user-id]` - The id of the user to be removed
     + Optional parameters:
@@ -302,7 +285,7 @@ As an alternative User-id field can be found in the cookies after a successful a
         +   `-ti [team-id]` - Team id, if set will only be omitted from the team
         +   `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
         
-        
+       
           * Organization id (orgId) field can be found as one of the url parameters in the admin/manage panel.
 ### Copy branch
 Perform branch merging using copy with additional options.

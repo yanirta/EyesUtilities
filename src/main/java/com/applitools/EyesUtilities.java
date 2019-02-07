@@ -21,6 +21,7 @@ public class EyesUtilities {
     public static void main(String[] args) {
         EyesUtilities main = new EyesUtilities();
         JCommander jc = new JCommander();
+        jc.setCaseSensitiveOptions(false);
         jc.setProgramName("EyesUtilities");
 
         try {
