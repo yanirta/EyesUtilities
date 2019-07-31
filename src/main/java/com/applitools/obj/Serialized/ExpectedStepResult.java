@@ -15,6 +15,7 @@ public class ExpectedStepResult {
     private Object matchSettings;
     private String OccurredAt;
     private Object appEnvironment;
+    private Object env;
     private String defaultMatchLevel;
     private String state;
 
@@ -91,11 +92,11 @@ public class ExpectedStepResult {
     }
 
     public Object getEnv() {
-        return appEnvironment;
+        return this.env;
     }
 
-    public void setEnv(Object appEnvironment) {
-        this.appEnvironment = appEnvironment;
+    public void setEnv(Object env) {
+        this.env = env;
     }
 
     public String getImageId() {

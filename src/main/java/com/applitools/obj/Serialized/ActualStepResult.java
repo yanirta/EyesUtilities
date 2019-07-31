@@ -20,6 +20,7 @@ public class ActualStepResult {
     private String ExpectedImageId;
     private String expectedThumbprintId;
     private Boolean wasDomUsed;
+    private String renderId;
 
     public Boolean getIsPrimary() {
         return IsPrimary;
@@ -143,5 +144,13 @@ public class ActualStepResult {
 
     public void setWasDomUsed(Boolean wasDomUsed) {
         this.wasDomUsed = wasDomUsed;
+    }
+
+    public String getRenderId() {
+        return renderId;
+    }
+
+    public void setRenderId(String renderId) {
+        this.renderId = renderId;
     }
 }

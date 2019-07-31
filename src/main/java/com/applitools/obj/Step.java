@@ -34,10 +34,12 @@ public class Step {
     }
 
     public String getExpectedImage() throws IOException {
+        if (expected == null) return "";
         return saveResourceById(expected.getImageId(), BASELINE_ARTIFACT_TYPE);
     }
 
     public String getActualImage() throws IOException {
+        if (actual == null) return "";
         return saveResourceById(actual.getImageId(), ACTUAL_ARTIFACT_TYPE);
     }
 
@@ -79,7 +81,10 @@ public class Step {
     protected Map<String, String> getPathParams() {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("step_index", String.valueOf(index));
-        params.put("step_tag", Utils.toFolderName(actual.getTag()));
+        String tag = "";
+        if (actual != null) tag = actual.getTag();
+        else if (expected != null) tag = expected.getTag();
+        params.put("step_tag", Utils.toFolderName(tag));
         params.put("file_ext", ARTIFACT_EXT);
         return params;
     }

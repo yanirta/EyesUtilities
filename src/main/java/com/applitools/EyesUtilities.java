@@ -27,7 +27,7 @@ public class EyesUtilities {
         try {
             main.run(jc, args);
         } catch (Throwable e) {
-            if (!e.getMessage().isEmpty())
+            if (e.getMessage()!= null && !e.getMessage().isEmpty())
                 System.out.println(e.getMessage());
             else{//Gets more messy
                 e.printStackTrace();

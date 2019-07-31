@@ -36,7 +36,7 @@ public abstract class ResultsAPI extends CommandBase {
     }
 
     public ResultsAPI(String resUrl, String viewKey) {
-        this.urls = new ArrayList<String>();
+        this.urls = new ArrayList<>();
         this.urls.add(resUrl);
         this.viewKey = viewKey;
     }
