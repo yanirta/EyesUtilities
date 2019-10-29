@@ -21,6 +21,7 @@ public class ActualStepResult {
     private String expectedThumbprintId;
     private Boolean wasDomUsed;
     private String renderId;
+    private String source;
 
     public Boolean getIsPrimary() {
         return IsPrimary;
@@ -152,5 +153,13 @@ public class ActualStepResult {
 
     public void setRenderId(String renderId) {
         this.renderId = renderId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }
