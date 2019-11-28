@@ -1,11 +1,10 @@
 package com.applitools.Commands;
 
 import com.applitools.obj.Batches;
-import com.applitools.obj.PathGenerator;
+import com.applitools.obj.PathBuilder;
 import com.applitools.obj.Query;
 import com.applitools.obj.ResultUrl;
 import com.applitools.utils.SemiColonSplitter;
-import com.applitools.utils.Validate;
 import com.beust.jcommander.Parameter;
 import org.apache.commons.lang.StringUtils;
 
@@ -52,8 +51,8 @@ public abstract class ResultsAPI extends CommandBase {
 
     abstract protected HashMap<String, String> getParams();
 
-    protected Batches getBatches(PathGenerator pathGen) throws IOException {
-        PathGenerator pg = pathGen.build(getParams());
+    protected Batches getBatches(PathBuilder pathGen) throws IOException {
+        PathBuilder pg = pathGen.recreate(getParams());
         if (queries != null && !queries.isEmpty()) {
             if (userName == null || userId == null || StringUtils.isEmpty(userName) || StringUtils.isEmpty(userId))
                 throw new RuntimeException("Queries require userName(-un) and userId parameters(ui) to be specified");

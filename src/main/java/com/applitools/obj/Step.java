@@ -20,17 +20,17 @@ public class Step {
     protected String testId;
     protected ExpectedStepResult expected;
     protected ActualStepResult actual;
-    protected PathGenerator pathGenerator;
+    protected PathBuilder pathBuilder;
     private int index;
     private ResultsAPIContext context;
 
-    public Step(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
+    public Step(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathBuilder pathBuilder) {
         this.context = context;
         this.index = i;
         this.expected = expected;
         this.actual = actual;
         this.testId = testId;
-        this.pathGenerator = pathGenerator;
+        this.pathBuilder = pathBuilder;
     }
 
     public String getExpectedImage() throws IOException {
@@ -71,8 +71,8 @@ public class Step {
     private String saveResourceById(String imageId, String artifact_type) throws IOException {
         Map<String, String> params = getPathParams();
         params.put("artifact_type", artifact_type);
-        File destination = pathGenerator.build(params).generateFile();
-        pathGenerator.ensureTargetFolder();
+        File destination = pathBuilder.recreate(params).buildFile();
+        pathBuilder.ensureTargetFolder();
         URL imageResource = context.getImageResource(imageId);
         Utils.saveImage(imageResource.toString(), destination);
         return destination.toString();

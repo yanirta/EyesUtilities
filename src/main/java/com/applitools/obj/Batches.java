@@ -36,7 +36,7 @@ public class Batches extends ArrayList<BatchInfo> {
     private int stepsNew = 0;
     private int stepsMissing = 0;
 
-    public Batches(List<String> urls, String viewKey, PathGenerator pathGenerator) throws IOException {
+    public Batches(List<String> urls, String viewKey, PathBuilder pathBuilder) throws IOException {
         //Next is the logic to allow different ways to input multiple results, supporting variations of url, result urls and batch-ids
         Optional<String> first = urls.stream().filter((str) -> ResultUrl.isResultURL(str)).findFirst();
         ResultUrl resUrl = null;
@@ -59,7 +59,7 @@ public class Batches extends ArrayList<BatchInfo> {
             else throw new RuntimeException("Unexpected error!");
 
             ResultsAPIContext context = new ResultsAPIContext(resUrl, viewKey);
-            BatchInfo batchInfo = BatchInfo.get(context, pathGenerator);
+            BatchInfo batchInfo = BatchInfo.get(context, pathBuilder);
             if (batchInfo != null) this.add(batchInfo);
         }
 

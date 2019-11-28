@@ -18,7 +18,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestInfo {
-    private static final String PLAYBACK_FILE_TMPL = "%s//file:test_playback.gif";
+    private static final String PLAYBACK_FILENAME = "test_playback.gif";
 
     //region Fields
     private String Id;
@@ -62,7 +62,7 @@ public class TestInfo {
     //endregion
 
     @JsonIgnore
-    private PathGenerator pathGenerator;
+    private PathBuilder pathBuilder;
     @JsonIgnore
     private ResultsAPIContext context;
 
@@ -242,7 +242,7 @@ public class TestInfo {
                                 ExpectedAppOutput.get(i),
                                 ActualAppOutput.get(i),
                                 getId(),
-                                pathGenerator));
+                                pathBuilder));
             }
         }
         return failedSteps;
@@ -262,7 +262,7 @@ public class TestInfo {
                             ExpectedAppOutput.get(i),
                             ActualAppOutput.get(i),
                             getId(),
-                            pathGenerator));
+                            pathBuilder));
         return steps;
     }
 
@@ -287,7 +287,7 @@ public class TestInfo {
     }
 
     public String getPlaybackAnimation(int interval, boolean withDiffs) throws IOException {
-        pathGenerator.ensureTargetFolder();
+        pathBuilder.ensureTargetFolder();
 
         List<BufferedImage> images = new ArrayList<BufferedImage>(ActualAppOutput.size());
         for (Step step : getSteps()) {
@@ -298,7 +298,7 @@ public class TestInfo {
                     images.add(ImageIO.read(step.getActualImageUrl()));
         }
 
-        File file = new PathGenerator(String.format(PLAYBACK_FILE_TMPL, pathGenerator.generatePath().toString())).generateFile();
+        File file = new PathBuilder(pathBuilder.buildPath().toString(), PLAYBACK_FILENAME).buildFile();
         Utils.createAnimatedGif(images, file, interval);
 
         return file.getPath();
@@ -471,7 +471,7 @@ public class TestInfo {
     }
 
     @JsonIgnore
-    public void setPathGenerator(PathGenerator pathGenerator) {
+    public void setPathBuilder(PathBuilder pathBuilder) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("test_id", getId());
         params.put("batch_id", getBatchId());
@@ -482,7 +482,7 @@ public class TestInfo {
         params.put("os", getEnv().getOs());
         params.put("hostapp", getEnv().getHostingApp());
         params.put("viewport", getEnv().getDisplaySizeStr());
-        this.pathGenerator = pathGenerator.build(params);
+        this.pathBuilder = pathBuilder.recreate(params);
     }
     //endregion
 

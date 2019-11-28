@@ -1,9 +1,7 @@
 package com.applitools.Commands;
 
 import com.applitools.obj.Batches;
-import com.applitools.obj.PathGenerator;
-import com.applitools.obj.Serialized.BatchInfo;
-import com.applitools.obj.Contexts.ResultsAPIContext;
+import com.applitools.obj.PathBuilder;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.apache.velocity.Template;
@@ -20,7 +18,7 @@ import java.util.HashMap;
 
 @Parameters(commandDescription = "Prepare report based on a template")
 public class Report extends ResultsAPI {
-    private PathGenerator pathGen = new PathGenerator("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
+    private PathBuilder pathGen = new PathBuilder("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
 
     @Parameter(names = {"-t", "--template"}, description = "Template file.")
     private String templFileName = "report.templ";

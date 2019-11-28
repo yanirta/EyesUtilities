@@ -20,8 +20,8 @@ public class FailedStep extends Step {
     private static final String ANIDIFF_ARTIFACT_EXT = "gif";
     private static final String DIFF_ARTIFACT_TYPE = "diff";
 
-    public FailedStep(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathGenerator pathGenerator) {
-        super(context, i, expected, actual, testId, pathGenerator);
+    public FailedStep(ResultsAPIContext context, int i, ExpectedStepResult expected, ActualStepResult actual, String testId, PathBuilder pathBuilder) {
+        super(context, i, expected, actual, testId, pathBuilder);
     }
 
     public String getDiff() throws IOException {
@@ -29,8 +29,8 @@ public class FailedStep extends Step {
         Map<String, String> params = getPathParams();
         params.put("file_ext", DIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
-        File destination = pathGenerator.build(params).generateFile();
-        pathGenerator.ensureTargetFolder();
+        File destination = pathBuilder.recreate(params).buildFile();
+        pathBuilder.ensureTargetFolder();
 
         Utils.saveImage(diffImage.toString(), destination);
         return destination.toString();
@@ -76,8 +76,8 @@ public class FailedStep extends Step {
         Map<String, String> params = getPathParams();
         params.put("file_ext", ANIDIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
-        File destination = pathGenerator.build(params).generateFile();
-        pathGenerator.ensureTargetFolder();
+        File destination = pathBuilder.recreate(params).buildFile();
+        pathBuilder.ensureTargetFolder();
 
         if (skipIfExists && destination.exists()) return destination.toString();
 
