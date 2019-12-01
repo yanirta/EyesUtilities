@@ -72,7 +72,7 @@ public class PathBuilder {
         );
     }
 
-    public void ensureTargetFolder() {
+    public synchronized void ensureTargetFolder() {
         File outFolder = buildPath();
         if (!outFolder.exists() && !outFolder.mkdirs())
             throw new RuntimeException(

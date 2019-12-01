@@ -3,16 +3,6 @@ package com.applitools.utils;
 import com.sun.glass.ui.Size;
 import com.sun.xml.internal.ws.util.StringUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
@@ -62,7 +52,7 @@ public abstract class Utils {
         clipboard.setContents(strSel, null);
     }
 
-    public static void saveImage(String imageUrl, File destinationFile) throws IOException {
+    public static synchronized void saveImage(String imageUrl, File destinationFile) throws IOException {
         try {
             FileUtils.copyURLToFile(new URL(imageUrl), destinationFile);
         } catch (IOException e) {
@@ -81,7 +71,7 @@ public abstract class Utils {
         return dateFormat.format(calendar.getTime());
     }
 
-    public static void createAnimatedGif(List<BufferedImage> images, File target, int timeBetweenFrames) throws IOException {
+    public static synchronized void createAnimatedGif(List<BufferedImage> images, File target, int timeBetweenFrames) throws IOException {
         ImageOutputStream output = new FileImageOutputStream(target);
         GifSequenceWriter writer = null;
 
