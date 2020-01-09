@@ -1,8 +1,8 @@
 package com.applitools.utils;
 
 import com.sun.glass.ui.Size;
-import com.sun.xml.internal.ws.util.StringUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
