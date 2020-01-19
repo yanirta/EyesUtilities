@@ -3,6 +3,7 @@ package com.applitools.Commands;
 import com.applitools.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.*;
@@ -16,7 +17,7 @@ import java.io.IOException;
 
 public abstract class LongTaskAPI extends CommandBase {
     private static final String LOCATION_HEADER = "Location";
-    private static ObjectMapper mapper = new ObjectMapper();
+    protected static ObjectMapper mapper = new ObjectMapper();
 
     public void run() throws Exception {
         CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -24,6 +25,7 @@ public abstract class LongTaskAPI extends CommandBase {
         try {
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
+                    parseResponse(response.getEntity());
                     System.out.printf("Finished\n");
                     return; //Success
                 case HttpStatus.SC_CONFLICT:
@@ -44,6 +46,9 @@ public abstract class LongTaskAPI extends CommandBase {
             client.close();
         }
     }
+
+    protected abstract void parseResponse(HttpEntity entity) throws IOException;
+
     @JsonIgnore
     public abstract String getTaskUrl();
 

@@ -17,10 +17,11 @@ hs_err_pid*
 /out/
 target/
 *.gif
-src/test/
+src/test/private
 
 *.html
 .DS_Store
+.idea
 .idea/.DS_Store
 .idea/workspace.xml
 src/main/java/.DS_Store
