@@ -1,16 +1,16 @@
 package com.applitools.obj.Contexts;
 
 public class BranchesAPIContext {
-    private static final String BRANCHES_URL_TMPL = "https://%s/api/baselines/copybranch?accesskey=%s";
+    private static final String BRANCHES_URL_TMPL = "https://%s/api/baselines/branches/merge?apiKey=%s";
 
     private static BranchesAPIContext context_;
 
     private String serverUrl_;
-    private String updateKey_;
+    private String mergeKey_;
 
     private BranchesAPIContext(String serverUrl, String updateKey) {
         this.serverUrl_ = serverUrl;
-        this.updateKey_ = updateKey;
+        this.mergeKey_ = updateKey;
     }
 
     public static synchronized BranchesAPIContext Init(String serverUrl, String updateKey) {
@@ -25,6 +25,6 @@ public class BranchesAPIContext {
     }
 
     public String getComposedUrl() {
-        return String.format(BRANCHES_URL_TMPL, serverUrl_, updateKey_);
+        return String.format(BRANCHES_URL_TMPL, serverUrl_, mergeKey_);
     }
 }

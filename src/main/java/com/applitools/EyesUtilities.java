@@ -2,7 +2,6 @@ package com.applitools;
 
 import com.applitools.Commands.*;
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription = "A 'swiss knife' made to get advanced functionality out of Applitools api")
@@ -12,7 +11,7 @@ public class EyesUtilities {
     private DownloadDiffs downloadDiffs = new DownloadDiffs();
     private DownloadImages downloadImages = new DownloadImages();
     private Report report = new Report();
-    private CopyBranch copyBranch = new CopyBranch();
+    private MergeBranch mergeBranch = new MergeBranch();
     private AnimatedDiffs animatedDiffs = new AnimatedDiffs();
     private Playback playback = new Playback();
     private Admin admin = new Admin();
@@ -48,7 +47,7 @@ public class EyesUtilities {
         jc.addCommand("diffs", downloadDiffs);
         jc.addCommand("images", downloadImages);
         jc.addCommand("report", report);
-        jc.addCommand("copybranch", copyBranch);
+        jc.addCommand("merge", mergeBranch);
         jc.addCommand("anidiffs", animatedDiffs);
         jc.addCommand("playback", playback);
         jc.addCommand("admin", admin);
