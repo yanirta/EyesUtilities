@@ -299,6 +299,7 @@ Syntax:
 + Optional parameters:
     + `-t [TargetBranch]` - Target branch for merge
     + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+    + `-d` - Delete the source branch after a successful copy
     
 ## Resources
 + [Applitools website](https://applitools.com)
