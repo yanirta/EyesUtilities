@@ -291,15 +291,15 @@ General syntax:
 Perform branch merging with additional options.
 
 Syntax:
-> java -jar EyesUtilities.jar merge -k [mergeKey] -s [sourceBranch] <[optional params]> 
+> java -jar EyesUtilities.jar merge -k [apiKey] -s [sourceBranch] <[optional params]> 
 
 + Required parameters:
-    + `-k [mergeKey]` - Your enterprise branch management api key
+    + `-k [apiKey]` - The apiKey must have merge permissions.
     + `-s [sourceBranch]` - Source branch name
 + Optional parameters:
     + `-t [TargetBranch]` - Target branch for merge
     + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
-    + `-d` - Delete the source branch after a successful copy
+    + `-d` - Delete the source branch after a successful merge. The apiKey must have merge, read and write permissions.
     
 ## Resources
 + [Applitools website](https://applitools.com)
