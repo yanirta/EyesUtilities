@@ -287,21 +287,17 @@ General syntax:
         
        
           * Organization id (orgId) field can be found as one of the url parameters in the admin/manage panel.
-### Copy branch
-Perform branch merging using copy with additional options.
+### Merge branch
+Perform branch merging with additional options.
 
 Syntax:
-> java -jar EyesUtilities.jar copybranch -k [BranchKey] -s [SourceBranch] -a [AppName] <[optional params]> 
+> java -jar EyesUtilities.jar merge -k [mergeKey] -s [sourceBranch] <[optional params]> 
 
 + Required parameters:
-    + `-k [BranchKey]` - Your enterprise branch management api key
-    + `-s [SourceBranch]` - Source branch name
-    + `-a [AppName]` - Application name in branch
+    + `-k [mergeKey]` - Your enterprise branch management api key
+    + `-s [sourceBranch]` - Source branch name
 + Optional parameters:
     + `-t [TargetBranch]` - Target branch for merge
-    + `-o` - Force overwrite in case of conflict
-    + `-all` - Copy all including unchanged steps
-    + `-d` - Delete the source branch after successful copy
     + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
     
 ## Resources
