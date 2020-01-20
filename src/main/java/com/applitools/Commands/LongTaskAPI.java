@@ -25,7 +25,7 @@ public abstract class LongTaskAPI extends CommandBase {
         try {
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    parseResponse(response.getEntity());
+                    handleResponse(response.getEntity(), client);
                     System.out.printf("Finished\n");
                     return; //Success
                 case HttpStatus.SC_CONFLICT:
@@ -47,7 +47,7 @@ public abstract class LongTaskAPI extends CommandBase {
         }
     }
 
-    protected abstract void parseResponse(HttpEntity entity) throws IOException;
+    protected abstract void handleResponse(HttpEntity entity, CloseableHttpClient client) throws IOException;
 
     @JsonIgnore
     public abstract String getTaskUrl();
@@ -68,7 +68,7 @@ public abstract class LongTaskAPI extends CommandBase {
     }
 
 
-    private static void throwUnexpectedResponse(StatusLine statusLine) {
+    protected static void throwUnexpectedResponse(StatusLine statusLine) {
         throw new RuntimeException(String.format("Unexpected response from request, code: %s, message: %s \n",
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase()));
