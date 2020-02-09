@@ -22,7 +22,7 @@ As a result every cli call should start with:
 * [Download test images](#download-test-images)
 * [Generating batch(es) Report](#generating-batches-Report)
 * [Administration](#administration)
-* [Copy branch](#copy-branch)
+* [Merge branch](#merge-branch)
 
 ### Generate steps animation
 This command will generate a set of animated gifs for each failing step inside the provided test.

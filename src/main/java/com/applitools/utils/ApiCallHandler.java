@@ -12,7 +12,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class ApiCallHandler {
     private static final long INTERVAL_MULTIPLIER = 2;
-//    private long interval = 500; //MSec
     private static final int POLLING_RETRIES = 10;
     private static final String LOCATION_HEADER = "Location";
 
