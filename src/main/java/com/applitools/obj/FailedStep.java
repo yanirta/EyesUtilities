@@ -3,9 +3,9 @@ package com.applitools.obj;
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.Serialized.ActualStepResult;
 import com.applitools.obj.Serialized.ExpectedStepResult;
+import com.applitools.utils.ResourceDownloader;
 import com.applitools.utils.Utils;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,31 +24,31 @@ public class FailedStep extends Step {
         super(context, i, expected, actual, testId, pathBuilder);
     }
 
-    public String getDiff() throws IOException {
+    public String getDiff() throws IOException, InterruptedException {
         URL diffImage = getDiffImageUrl();
         Map<String, String> params = getPathParams();
         params.put("file_ext", DIFF_ARTIFACT_EXT);
         params.put("artifact_type", DIFF_ARTIFACT_TYPE);
         File destination = pathBuilder.recreate(params).buildFile();
         pathBuilder.ensureTargetFolder();
-
-        Utils.saveImage(diffImage.toString(), destination);
+        BufferedImage image = downloader.getImage(diffImage);
+        Utils.saveImage(image, destination);
         return destination.toString();
     }
 
-    public String getAnimatedDiff() throws IOException {
+    public String getAnimatedDiff() throws IOException, InterruptedException {
         return getAnimatedDiff(true, false);
     }
 
-    public String getAnimatedDiff(int transitionInterval) throws IOException {
+    public String getAnimatedDiff(int transitionInterval) throws IOException, InterruptedException {
         return getAnimatedDiff(true, false, transitionInterval);
     }
 
-    public String getAnimatedThumbprints() throws IOException {
+    public String getAnimatedThumbprints() throws IOException, InterruptedException {
         return getAnimatedThumbprints(false);
     }
 
-    public String getAnimatedThumbprints(boolean skipIfExists) throws IOException {
+    public String getAnimatedThumbprints(boolean skipIfExists) throws IOException, InterruptedException {
         try {
             return getAnimatedDiff(false, skipIfExists);
         } catch (Exception e) {
@@ -56,19 +56,19 @@ public class FailedStep extends Step {
         }
     }
 
-    private static void saveAnimatedDiff(String baselineImg, String actualImg, String diffImg, File target, int transitionInterval) throws IOException {
+    private static void saveAnimatedDiff(String baselineImg, String actualImg, String diffImg, File target, int transitionInterval, ResourceDownloader downloader) throws IOException, InterruptedException {
         List<BufferedImage> images = new ArrayList<BufferedImage>(3);
-        images.add(ImageIO.read(new URL(baselineImg)));
-        images.add(ImageIO.read(new URL(actualImg)));
-        if (diffImg != null) images.add(ImageIO.read(new URL(diffImg)));
+        images.add(downloader.getImage(baselineImg));
+        images.add(downloader.getImage(actualImg));
+        if (diffImg != null) images.add(downloader.getImage(diffImg));
         Utils.createAnimatedGif(images, target, transitionInterval);
     }
 
-    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists) throws IOException {
+    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists) throws IOException, InterruptedException {
         return getAnimatedDiff(withDiff, skipIfExists, ANIMATION_TRANSITION_INTERVAL);
     }
 
-    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException {
+    private String getAnimatedDiff(boolean withDiff, boolean skipIfExists, int transitionInterval) throws IOException, InterruptedException {
         URL expectedImageURL = getExpectedImageUrl();
         URL actualImageURL = getActualImageUrl();
         URL diffImageURL = getDiffImageUrl();
@@ -86,7 +86,8 @@ public class FailedStep extends Step {
                 actualImageURL.toString(),
                 withDiff ? diffImageURL.toString() : null,
                 destination,
-                transitionInterval
+                transitionInterval,
+                downloader
         );
 
         return destination.toString(); //TODO relativize

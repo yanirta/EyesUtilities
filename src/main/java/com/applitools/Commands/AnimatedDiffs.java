@@ -23,11 +23,11 @@ public class AnimatedDiffs extends ResultsAPIExtract {
         super(url, viewKey, destination);
     }
 
-    protected void runPerTest(TestInfo ti) throws IOException {
+    protected void runPerTest(TestInfo ti) throws InterruptedException {
         downloadTestStepsAnimation(ti);
     }
 
-    private void downloadTestStepsAnimation(TestInfo testInfo) {
+    private void downloadTestStepsAnimation(TestInfo testInfo) throws InterruptedException {
         List<FailedStep> failedSteps = testInfo.getFailedSteps();
         int i = 1;
         int total = failedSteps.size();

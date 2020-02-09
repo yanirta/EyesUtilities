@@ -1,9 +1,7 @@
 package com.applitools.utils;
 
 import com.sun.glass.ui.Size;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-
+import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
@@ -11,39 +9,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
 public abstract class Utils {
-    public static <T> T selectNotNull(T... vars) {
-        T t = null;
-        for (T var : vars)
-            if (var != null)
-                if (t != null) return null;
-                else t = var;
-        return t;
-    }
-
-    public static <T extends Enum<T>> T parseEnum(Class<T> c, String string) {
-        if (c != null && string != null) {
-            try {
-                return Enum.valueOf(c, string.trim().toLowerCase());
-            } catch (IllegalArgumentException ex) {
-            }
-        }
-        throw new RuntimeException(String.format("Unable to parse value %s for enum %s", string, c.getName()));
-    }
-
-    public static String getEnumValues(Class type) {
-        StringBuilder sb = new StringBuilder();
-        for (Object val : EnumSet.allOf(type)) {
-            sb.append(StringUtils.capitalize(val.toString().toLowerCase()));
-            sb.append('|');
-        }
-        return sb.substring(0, sb.length() - 1);
-    }
 
     public static void setClipboard(String copy) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -52,15 +22,11 @@ public abstract class Utils {
         clipboard.setContents(strSel, null);
     }
 
-    public static synchronized void saveImage(String imageUrl, File destinationFile) throws IOException {
-        try {
-            FileUtils.copyURLToFile(new URL(imageUrl), destinationFile);
-        } catch (IOException e) {
-            System.out.printf("Unable to process image from %s to %s \n Error text: %s",
-                    imageUrl,
-                    destinationFile,
-                    e.getMessage());
-            throw e;
+    public static synchronized void saveImage(BufferedImage image, File destinationFile) throws IOException {
+        if (null != image) {
+            ImageIO.write(image, "png", destinationFile);
+        } else {
+            System.out.println("Unable to process image");
         }
     }
 
