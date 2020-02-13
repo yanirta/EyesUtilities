@@ -34,7 +34,6 @@ public abstract class LongTaskAPI extends CommandBase {
                 case HttpStatus.SC_ACCEPTED:
                     if (!response.containsHeader("Location"))
                         throw new RuntimeException("Error, No Location header found on continuous task!");
-                    System.out.printf("This task might take time, lay back...\n");
                     Header delete = waitForFinish(response.getFirstHeader(LOCATION_HEADER), client);
                     deleteLongTask(delete, client);
                     System.out.printf("Finished\n");

@@ -12,7 +12,7 @@ public class ResultsAPIContext {
     private static final String TEST_API_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s?ApiKey=%s&format=json";
     private static final String IMAGE_URL_TEMPLATE = "https://%s/api/images/%s/?ApiKey=%s";
     private static final String DIFF_URL_TEMPLATE = "https://%s/api/sessions/batches/%s/%s/steps/%s/diff?ApiKey=%s";
-
+    private static final String GENERAL_API_CALL = "%s?ApiKey=%s";
     //private static ResultsAPIContext context_;
     private final ResultUrl url;
     private final String viewkey;
@@ -26,6 +26,9 @@ public class ResultsAPIContext {
         this.viewkey = viewkey;
     }
 
+    public String decorateLocation(String url) {
+        return String.format(url.contains("?") ? GENERAL_API_CALL.replace("?","&") : GENERAL_API_CALL, url, viewkey);
+    }
 //    public static synchronized ResultsAPIContext init(ResultUrl url, String viewkey) {
 //        if (context_ != null)
 //            throw new RuntimeException("Invaild call of Context.init(...)");

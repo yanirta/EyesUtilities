@@ -17,7 +17,8 @@ hs_err_pid*
 /out/
 target/
 *.gif
-src/test/private
+src/test/java/Private
+TestData/Private
 
 *.html
 .DS_Store

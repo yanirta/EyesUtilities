@@ -70,5 +70,5 @@ public abstract class ResultsAPIExtract extends ResultsAPI {
         return params;
     }
 
-    protected abstract void runPerTest(TestInfo testInfo) throws IOException;
+    protected abstract void runPerTest(TestInfo testInfo) throws IOException, InterruptedException;
 }

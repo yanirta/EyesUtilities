@@ -3,8 +3,10 @@ package com.applitools.obj;
 import com.applitools.obj.Contexts.ResultsAPIContext;
 import com.applitools.obj.Serialized.ActualStepResult;
 import com.applitools.obj.Serialized.ExpectedStepResult;
+import com.applitools.utils.ResourceDownloader;
 import com.applitools.utils.Utils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,6 +18,7 @@ public class Step {
     private static final String ARTIFACT_EXT = "png";
     private static final String BASELINE_ARTIFACT_TYPE = "baseline";
     private static final String ACTUAL_ARTIFACT_TYPE = "actual";
+    protected final ResourceDownloader downloader;
 
     protected String testId;
     protected ExpectedStepResult expected;
@@ -31,14 +34,15 @@ public class Step {
         this.actual = actual;
         this.testId = testId;
         this.pathBuilder = pathBuilder;
+        this.downloader = new ResourceDownloader(context);
     }
 
-    public String getExpectedImage() throws IOException {
+    public String getExpectedImage() throws IOException, InterruptedException {
         if (expected == null) return "";
         return saveResourceById(expected.getImageId(), BASELINE_ARTIFACT_TYPE);
     }
 
-    public String getActualImage() throws IOException {
+    public String getActualImage() throws IOException, InterruptedException {
         if (actual == null) return "";
         return saveResourceById(actual.getImageId(), ACTUAL_ARTIFACT_TYPE);
     }
@@ -68,13 +72,14 @@ public class Step {
         return context.getDiffImageUrl(testId, index);
     }
 
-    private String saveResourceById(String imageId, String artifact_type) throws IOException {
+    private String saveResourceById(String imageId, String artifact_type) throws IOException, InterruptedException {
         Map<String, String> params = getPathParams();
         params.put("artifact_type", artifact_type);
         File destination = pathBuilder.recreate(params).buildFile();
         pathBuilder.ensureTargetFolder();
         URL imageResource = context.getImageResource(imageId);
-        Utils.saveImage(imageResource.toString(), destination);
+        BufferedImage image = downloader.getImage(imageResource);
+        Utils.saveImage(image, destination);
         return destination.toString();
     }
 

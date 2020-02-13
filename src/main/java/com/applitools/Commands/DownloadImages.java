@@ -25,7 +25,7 @@ public class DownloadImages extends ResultsAPIExtract {
         this.onlyActuals = onlyActuals;
     }
 
-    protected void runPerTest(TestInfo testInfo) throws IOException {
+    protected void runPerTest(TestInfo testInfo) throws IOException, InterruptedException {
         List<Step> steps = testInfo.getSteps();
         for (Step step : steps) {
             if (onlyBaselines) saveBaselineImage(step);
@@ -34,16 +34,16 @@ public class DownloadImages extends ResultsAPIExtract {
         }
     }
 
-    private void saveImages(Step step) throws IOException {
+    private void saveImages(Step step) throws IOException, InterruptedException {
         saveBaselineImage(step);
         saveActualImage(step);
     }
 
-    private void saveActualImage(Step step) throws IOException {
+    private void saveActualImage(Step step) throws IOException, InterruptedException {
         step.getActualImage();
     }
 
-    private void saveBaselineImage(Step step) throws IOException {
+    private void saveBaselineImage(Step step) throws IOException, InterruptedException {
         step.getExpectedImage();
     }
 }
