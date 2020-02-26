@@ -2,25 +2,13 @@ package com.applitools.Commands;
 
 
 import com.applitools.obj.Contexts.BranchesAPIContext;
-import com.applitools.obj.Serialized.BranchInfo;
 import com.applitools.obj.Serialized.MergeBranchResponse;
+import com.applitools.utils.BaselinesManager;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Parameters(commandDescription = "Performs branch merge operations")
-public class MergeBranch extends LongTaskAPI {
+public class MergeBranch extends CommandBase {
     @Parameter(names = {"-k", "-key"}, description = "Branch management api key", required = true)
     private String mergeKey;
     @Parameter(names = {"-as", "-server"}, description = "Set Applitools server url. [default eyes.applitools.com]")
@@ -34,65 +22,18 @@ public class MergeBranch extends LongTaskAPI {
 
     @Override
     public void run() throws Exception {
-        BranchesAPIContext.Init(server, mergeKey);
-        super.run();
-    }
-
-    @Override
-    protected void handleResponse(HttpEntity entity, CloseableHttpClient client) throws IOException {
-        String resp = EntityUtils.toString(entity, "UTF-8");
-        MergeBranchResponse response = mapper.readValue(resp, MergeBranchResponse.class);
+        System.out.println(String.format("Attempting to merge source branch: %s to target branch: %s.", sourceBranch, targetBranch));
+        BranchesAPIContext context = BranchesAPIContext.Init(getFormattedServerUrl(), mergeKey);
+        BaselinesManager baselinesManager = new BaselinesManager(context);
+        MergeBranchResponse response = baselinesManager.mergeBranches(this);
         if (!response.isMerged())
-            System.out.println("Found %s conflict(s), merge aborted. Please resolve conflicts through applitools test-manager and try again");
+            System.out.println("\nConflicts have been found!!! Merge aborted" +
+                    "\nPlease resolve conflicts through applitools test-manager and try again");
         else {
-            System.out.println("Merge succeeded");
-            if (isDelete) deleteBranch(client, sourceBranch);
+            System.out.println("\nMerge succeeded");
+            if (isDelete && baselinesManager.deleteBranch(sourceBranch))
+                System.out.println(String.format("Source branch: %s has been deleted", sourceBranch));
         }
-    }
-
-    private void deleteBranch(CloseableHttpClient client, String sourceBranch) throws IOException {
-        BranchInfo bi = getBranchInfoByName(sourceBranch);
-        if (bi == null) return;
-        CloseableHttpResponse response = performDeletion(client, bi);
-        switch (response.getStatusLine().getStatusCode()) {
-            case HttpStatus.SC_OK:
-            case HttpStatus.SC_ACCEPTED:
-                System.out.println("Source branch was deleted");
-                break;
-            default:
-                throwUnexpectedResponse(response.getStatusLine());
-        }
-
-        if (response != null) response.close();
-    }
-
-    private CloseableHttpResponse performDeletion(CloseableHttpClient client, BranchInfo bi) throws IOException {
-        bi.setIsDeleted(true);
-
-        HttpPut put = new HttpPut(getDeleteUrl(bi.getId()));
-        String json = mapper.writeValueAsString(bi);
-        StringEntity entity = new StringEntity(json);
-        put.setEntity(entity);
-        put.addHeader("Content-Type", "application/json");
-        return client.execute(put);
-    }
-
-    private String getDeleteUrl(String branchId) {
-        return BranchesAPIContext.instance().getDeleteUrl(branchId);
-    }
-
-    private BranchInfo getBranchInfoByName(String sourceBranch) throws IOException {
-        BranchInfo[] branchInfos = mapper.readValue(new URL(getBaseUrl()), BranchInfo[].class);
-        Optional<BranchInfo> found = Arrays.stream(branchInfos).filter(b -> b.getName().equals(sourceBranch)).findFirst();
-        return found.isPresent() ? found.get() : null;
-    }
-
-    public String getTaskUrl() {
-        return BranchesAPIContext.instance().getMergedUrl();
-    }
-
-    private String getBaseUrl() {
-        return BranchesAPIContext.instance().getBaseUrl();
     }
 
     //Per object serialization
@@ -100,15 +41,12 @@ public class MergeBranch extends LongTaskAPI {
         return sourceBranch;
     }
 
-    public void setSourceBranch(String sourceBranch) {
-        this.sourceBranch = sourceBranch;
-    }
-
     public String getTargetBranch() {
         return targetBranch;
     }
 
-    public void setTargetBranch(String targetBranch) {
-        this.targetBranch = targetBranch;
+    private String getFormattedServerUrl() {
+        String formattedServerUrl = server.replace("https://", "");
+        return formattedServerUrl.replace("http://", "");
     }
 }
