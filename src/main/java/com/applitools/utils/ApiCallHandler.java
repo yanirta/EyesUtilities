@@ -1,66 +1,83 @@
 package com.applitools.utils;
 
-import com.applitools.obj.Contexts.ResultsAPIContext;
+import com.applitools.obj.Contexts.Context;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-public class ApiCallHandler {
+import java.io.IOException;
+
+public abstract class ApiCallHandler {
     private static final long INTERVAL_MULTIPLIER = 2;
     private static final int POLLING_RETRIES = 10;
     private static final String LOCATION_HEADER = "Location";
 
     private static final CloseableHttpClient client = HttpClientBuilder.create().build();
 
-    public static CloseableHttpResponse sendGetRequest(String uri, ResultsAPIContext ctx) throws InterruptedException {
-        HttpGet req = new HttpGet(uri);
-        CloseableHttpResponse response = sendRequest(req);
-        String location;
-        while (response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-            switch (response.getStatusLine().getStatusCode()) {
-                case HttpStatus.SC_ACCEPTED: //202
-                    location = response.getFirstHeader(LOCATION_HEADER).getValue();
-                    req = new HttpGet(ctx.decorateLocation(location));
-                    response = pollStatus(req, POLLING_RETRIES);
-                    break;
-                case HttpStatus.SC_CREATED: //201
-                    location = response.getFirstHeader(LOCATION_HEADER).getValue();
-                    HttpDelete del = new HttpDelete(ctx.decorateLocation(location));
-                    response = sendRequest(del);
-                    break;
-                default:
-                    throwUnexpectedResponse(response.getStatusLine());
-            }
-        }
-        return response;
+    public static CloseableHttpResponse sendGetRequest(String uri, Context ctx) throws InterruptedException, IOException {
+        HttpGet get = new HttpGet(uri);
+        return runLongTask(get, ctx);
     }
 
-    private static CloseableHttpResponse sendRequest(HttpRequestBase request){
+    public static CloseableHttpResponse sendPostRequest(String uri, StringEntity entity, Context ctx) throws InterruptedException, IOException {
+        HttpPost post = new HttpPost(uri);
+        post.addHeader("Content-Type", "application/json");
+        post.setEntity(entity);
+        return runLongTask(post, ctx);
+    }
+
+    public static CloseableHttpResponse sendPutRequest(String uri, StringEntity entity, Context ctx) throws InterruptedException, IOException {
+        HttpPut put = new HttpPut(uri);
+        put.addHeader("Content-Type", "application/json");
+        put.setEntity(entity);
+        return runLongTask(put, ctx);
+    }
+
+    private static CloseableHttpResponse runLongTask(HttpRequestBase request, Context ctx) throws InterruptedException, IOException {
+        String location;
+        try (CloseableHttpResponse response = sendRequest(request)) {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) return response;
+
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_ACCEPTED)
+                throwUnexpectedResponse(response.getStatusLine());
+
+            location = response.getFirstHeader(LOCATION_HEADER).getValue();
+        }
+        HttpGet get = new HttpGet(ctx.decorateLocation(location));
+        try (CloseableHttpResponse response = pollStatus(get, POLLING_RETRIES)) {
+
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED)
+                throwUnexpectedResponse(response.getStatusLine());
+
+            location = response.getFirstHeader(LOCATION_HEADER).getValue();
+        }
+        HttpDelete del = new HttpDelete(ctx.decorateLocation(location));
+        return sendRequest(del);
+    }
+
+    private static CloseableHttpResponse sendRequest(HttpRequestBase request) {
         try {
-//            System.out.println(request.toString());
             return client.execute(request);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new Error("Error message: " + e.getMessage());
         }
     }
 
-    private static CloseableHttpResponse pollStatus(HttpGet req, int retry) throws InterruptedException {
+    private static CloseableHttpResponse pollStatus(HttpGet req, int retry) throws InterruptedException, IOException {
         long interval = 500; //MSec
         Thread.sleep(interval);
 
-        CloseableHttpResponse response;
-        while(retry>0) {
+        while (retry > 0) {
             Thread.sleep(interval);
-            response = sendRequest(req);
-            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED)
-                return response;
-            interval = Math.min(INTERVAL_MULTIPLIER * interval, 10000);
-            retry--;
+            try (CloseableHttpResponse response = sendRequest(req)) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED)
+                    return response;
+                interval = Math.min(INTERVAL_MULTIPLIER * interval, 10000);
+                retry--;
+            }
         }
         throw new Error("Error message: Failed to get response");
     }

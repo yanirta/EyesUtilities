@@ -1,19 +1,17 @@
 package com.applitools.obj.Contexts;
 
-public class BranchesAPIContext {
+public class BranchesAPIContext extends Context {
     private static final String BRANCHES_BASE_URL_TMPL = "https://%s/api/baselines/branches?apiKey=%s";
     private static final String BRANCHES_MERGE_URL_TMPL = "https://%s/api/baselines/branches/merge?apiKey=%s";
     private static final String BRANCHES_DELETE_URL_TMPL = "https://%s/api/baselines/branches/%s?apiKey=%s";
 
-
     private static BranchesAPIContext context_;
 
     private String serverUrl_;
-    private String mergeKey_;
 
-    private BranchesAPIContext(String serverUrl, String updateKey) {
+    private BranchesAPIContext(String serverUrl, String mergeKey) {
+        super(mergeKey);
         this.serverUrl_ = serverUrl;
-        this.mergeKey_ = updateKey;
     }
 
     public static synchronized BranchesAPIContext Init(String serverUrl, String mergeKey) {
@@ -28,14 +26,14 @@ public class BranchesAPIContext {
     }
 
     public String getMergedUrl() {
-        return String.format(BRANCHES_MERGE_URL_TMPL, serverUrl_, mergeKey_);
+        return String.format(BRANCHES_MERGE_URL_TMPL, serverUrl_, getKey());
     }
 
     public String getBaseUrl() {
-        return String.format(BRANCHES_BASE_URL_TMPL, serverUrl_, mergeKey_);
+        return String.format(BRANCHES_BASE_URL_TMPL, serverUrl_, getKey());
     }
 
     public String getDeleteUrl(String branchId) {
-        return String.format(BRANCHES_DELETE_URL_TMPL, serverUrl_, branchId, mergeKey_);
+        return String.format(BRANCHES_DELETE_URL_TMPL, serverUrl_, branchId, getKey());
     }
 }
