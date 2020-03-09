@@ -8,11 +8,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription = "Performs branch merge operations")
-public class MergeBranch extends CommandBase {
-    @Parameter(names = {"-k", "-key"}, description = "Branch management api key", required = true)
-    private String mergeKey;
-    @Parameter(names = {"-as", "-server"}, description = "Set Applitools server url. [default eyes.applitools.com]")
-    private String server = "eyes.applitools.com";
+public class MergeBranch extends BaselineCommand {
     @Parameter(names = {"-s", "-source"}, description = "The source branch name", required = true)
     private String sourceBranch;
     @Parameter(names = {"-t", "-target"}, description = "The target branch name. If not used or passed “default” will copy to the main branch.")
@@ -23,7 +19,7 @@ public class MergeBranch extends CommandBase {
     @Override
     public void run() throws Exception {
         System.out.println(String.format("Attempting to merge source branch: %s to target branch: %s.", sourceBranch, targetBranch));
-        BranchesAPIContext context = BranchesAPIContext.Init(getFormattedServerUrl(), mergeKey);
+        BranchesAPIContext context = BranchesAPIContext.Init(getFormattedServerUrl(), apiKey);
         BaselinesManager baselinesManager = new BaselinesManager(context);
         MergeBranchResponse response = baselinesManager.mergeBranches(this);
         if (!response.isMerged())
@@ -43,10 +39,5 @@ public class MergeBranch extends CommandBase {
 
     public String getTargetBranch() {
         return targetBranch;
-    }
-
-    private String getFormattedServerUrl() {
-        String formattedServerUrl = server.replace("https://", "");
-        return formattedServerUrl.replace("http://", "");
     }
 }

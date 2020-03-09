@@ -12,6 +12,7 @@ public class EyesUtilities {
     private DownloadImages downloadImages = new DownloadImages();
     private Report report = new Report();
     private MergeBranch mergeBranch = new MergeBranch();
+    private CopyBaseline copyBaselines = new CopyBaseline();
     private AnimatedDiffs animatedDiffs = new AnimatedDiffs();
     private Playback playback = new Playback();
     private Admin admin = new Admin();
@@ -48,6 +49,7 @@ public class EyesUtilities {
         jc.addCommand("images", downloadImages);
         jc.addCommand("report", report);
         jc.addCommand("merge", mergeBranch);
+        jc.addCommand("copyBaselines", copyBaselines);
         jc.addCommand("anidiffs", animatedDiffs);
         jc.addCommand("playback", playback);
         jc.addCommand("admin", admin);

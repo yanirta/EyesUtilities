@@ -38,14 +38,15 @@ public abstract class ApiCallHandler {
 
     private static CloseableHttpResponse runLongTask(HttpRequestBase request, Context ctx) throws InterruptedException, IOException {
         String location;
-        try (CloseableHttpResponse response = sendRequest(request)) {
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) return response;
+        CloseableHttpResponse firstResponse = sendRequest(request);
+        if (firstResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) return firstResponse;
 
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_ACCEPTED)
-                throwUnexpectedResponse(response.getStatusLine());
+        if (firstResponse.getStatusLine().getStatusCode() != HttpStatus.SC_ACCEPTED)
+            throwUnexpectedResponse(firstResponse.getStatusLine());
 
-            location = response.getFirstHeader(LOCATION_HEADER).getValue();
-        }
+        location = firstResponse.getFirstHeader(LOCATION_HEADER).getValue();
+        firstResponse.close();
+
         HttpGet get = new HttpGet(ctx.decorateLocation(location));
         try (CloseableHttpResponse response = pollStatus(get, POLLING_RETRIES)) {
 
