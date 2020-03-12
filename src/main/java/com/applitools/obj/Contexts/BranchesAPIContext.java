@@ -4,6 +4,8 @@ public class BranchesAPIContext extends Context {
     private static final String BRANCHES_BASE_URL_TMPL = "https://%s/api/baselines/branches?apiKey=%s";
     private static final String BRANCHES_MERGE_URL_TMPL = "https://%s/api/baselines/branches/merge?apiKey=%s";
     private static final String BRANCHES_DELETE_URL_TMPL = "https://%s/api/baselines/branches/%s?apiKey=%s";
+    private static final String BASELINES_GET_URL_TMPL = "https://%s/api/baselines/query?apiKey=%s";
+    private static final String BASELINES_COPY_URL_TMPL = "https://%s/api/baselines/copy?apiKey=%s";
 
     private static BranchesAPIContext context_;
 
@@ -35,5 +37,13 @@ public class BranchesAPIContext extends Context {
 
     public String getDeleteUrl(String branchId) {
         return String.format(BRANCHES_DELETE_URL_TMPL, serverUrl_, branchId, getKey());
+    }
+
+    public String getBaselinesUrl() {
+        return String.format(BASELINES_GET_URL_TMPL, serverUrl_, getKey());
+    }
+
+    public String copyBaselinesUrl() {
+        return String.format(BASELINES_COPY_URL_TMPL, serverUrl_, getKey());
     }
 }

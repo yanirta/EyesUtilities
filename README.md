@@ -23,6 +23,7 @@ As a result every cli call should start with:
 * [Generating batch(es) Report](#generating-batches-Report)
 * [Administration](#administration)
 * [Merge branch](#merge-branch)
+* [Copy baselines](#copy-baselines)
 
 ### Generate steps animation
 This command will generate a set of animated gifs for each failing step inside the provided test.
@@ -294,13 +295,31 @@ Syntax:
 > java -jar EyesUtilities.jar merge -k [apiKey] -s [sourceBranch] <[optional params]> 
 
 + Required parameters:
-    + `-k [apiKey]` - The apiKey must have merge permissions.
+    + `-k [apiKey]` - The apiKey must have Merge permissions.
     + `-s [sourceBranch]` - Source branch name
 + Optional parameters:
-    + `-t [TargetBranch]` - Target branch for merge
+    + `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+    + `-t [targetBranch]` - Target branch for merge
     + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
     + `-d` - Delete the source branch after a successful merge. The apiKey must have merge, read and write permissions.
-    
+
+### Copy baselines
+Perform baselines copy with additional options.
+Unless filter applied, all baselines will be copied.
+If a baseline exists in target branch, it will be overwritten.
+
+Syntax:
+> java -jar EyesTilities.jar copyBaselines -k [apiKey] -t [targetBranch] 
+
++ Required parameters:
+    + `-k [apiKey]` - The apiKey must have Read and Write permissions
+    + `-t [targetBranch]` - Target branch name
++ Optional parameters:
+    + `-as [url]` - Applitools alternative server, default: eyes.applitools.com
+    + `-s [sourceBranch]` - Source branch name  default: 'default' branch
+    + `-an [appName]` - Filter baselines by application name
+    + `-dv` - Disable SSL certificate check and ignore possible errors. Note that using this flag is unsecured and dangerous.
+  
 ## Resources
 + [Applitools website](https://applitools.com)
 + [Web-Tester](https://github.com/yanirta/WebTester)

@@ -17,9 +17,19 @@ public class BaselineInfo {
     private String LastUpdated;
     private String LastUpdatedBy;
     private String BaselineModelId;
+    private String AppId;
+    private String AppName;
 
     public String getId() {
         return Id;
+    }
+
+    public String getAppId() {
+        return AppId;
+    }
+
+    public String getAppName() {
+        return AppName;
     }
 
     public String getBaseRev() {
@@ -40,6 +50,14 @@ public class BaselineInfo {
 
     public void setId(String id) {
         Id = id;
+    }
+
+    public void setAppId(String appId) {
+        AppId = appId;
+    }
+
+    public void setAppName(String appName) {
+        AppName = appName;
     }
 
     public void setBaseRev(String baseRev) {
