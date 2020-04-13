@@ -4,6 +4,7 @@ import com.applitools.obj.Batches;
 import com.applitools.obj.PathBuilder;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -14,10 +15,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.HashMap;
 
 @Parameters(commandDescription = "Prepare report based on a template")
 public class Report extends ResultsAPI {
+    private static final String REPORT_FOLDER = "Report";
+    private static final String DEFAULT_REPORT_TEMPLATE_DOWNNLOAD = "https://raw.githubusercontent.com/yanirta/EyesUtilities/master/Report/report.templ";
     private PathBuilder pathGen = new PathBuilder("{report_root}/Artifacts/{batch_id}/{test_id}/file:{step_index}_{step_tag}_{artifact_type}.{file_ext}");
 
     @Parameter(names = {"-t", "--template"}, description = "Template file.")
@@ -33,6 +37,11 @@ public class Report extends ResultsAPI {
 
     public void run() throws Exception {
         templFile = new File(templFileName);
+        if (!templFile.exists())
+            templFile = new File(REPORT_FOLDER, templFileName);
+        if (!templFile.exists())
+            templFile = new File(templFileName);
+        FileUtils.copyURLToFile(new URL(DEFAULT_REPORT_TEMPLATE_DOWNNLOAD), templFile);
         Velocity.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
         Velocity.setProperty("file.resource.loader.path", templFile.getAbsoluteFile().getParent());
         Velocity.init();
