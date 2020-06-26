@@ -76,11 +76,11 @@ public class Admin extends CommandBase {
             if (account == null)
                 throw new RuntimeException("No team was found!");
 
-            User[] users = adminApi.getUsers();
+            adminApi.getUsers();
             System.out.printf(TABS, "             Username", "        Name", "               Email", " Admin ", " Viewer ");
             for (Subscriber sub : account.getMembers().values()) {
                 User currUser = adminApi.getUserById(sub.getName());
-                if (currUser == null) {
+                if (currUser != null) {
                     System.out.printf(TABS,
                             currUser.getId(),
                             currUser.getFullName(),
