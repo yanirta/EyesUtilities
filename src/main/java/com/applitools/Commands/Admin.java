@@ -166,10 +166,10 @@ public class Admin extends CommandBase {
     @Parameters(commandDescription = "Remove user")
     private class RemoveUser extends AdminCommand {
 
-        @Parameter(names = {"-ri", "-removeUserId"}, description = "User id to remove", required = true)
+        @Parameter(names = {"-ri", "--removeUserId"}, description = "User id to remove", required = true)
         private String removeUserId;
 
-        @Parameter(names = {"-ti", "-teamId"}, description = "Team id to remove the user from")
+        @Parameter(names = {"-ti", "--teamId"}, description = "Team id to remove the user from")
         private String removeTeamId;
 
         @Override
