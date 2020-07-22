@@ -22,6 +22,15 @@ public class ActualStepResult {
     private Boolean wasDomUsed;
     private String renderId;
     private String source;
+    private HashMap expectedImage;
+
+    public HashMap getExpectedImage() {
+        return expectedImage;
+    }
+
+    public void setExpectedImage(HashMap expectedImage) {
+        this.expectedImage = expectedImage;
+    }
 
     public Boolean getIsPrimary() {
         return IsPrimary;
