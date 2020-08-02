@@ -9,7 +9,7 @@ you can start your trial by going to the [Applitools website](https://applitools
     * To quickly get on-board go to [the getting started tutorial](https://applitools.com/resources/tutorial).  
     * If you already have Applitools account but can't find proper tool, try the [Webtester here](https://github.com/yanirta/WebTester).
 * For many listed operations, an additional set of keys will be required.
-To get your keys please contact our support at [support@applitools.com](mailto:support@applitools.com).
+To get your keys please reach out to applitools support [via this link](https://help.applitools.com/hc/en-us/requests/new) or at [support@applitools.com](mailto:support@applitools.com).
 
 The general syntax is derived from the fact that the EyesUtilities is built in Java.  
 As a result every cli call should start with:
