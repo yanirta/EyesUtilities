@@ -13,7 +13,7 @@ To get your keys please reach out to applitools support [via this link](https://
 
 The general syntax is derived from the fact that the EyesUtilities is built in Java.  
 As a result every cli call should start with:
->Java -jar EyesUtilities.jar [command] [command specific parametes...]
+>Java -jar EyesUtilities.jar [command] [command specific parameters...]
 
 ## Appendix
 * [Generate steps animation](#generate-steps-animation)
