@@ -37,11 +37,10 @@ public class Report extends ResultsAPI {
 
     public void run() throws Exception {
         templFile = new File(templFileName);
-        if (!templFile.exists())
-            templFile = new File(REPORT_FOLDER, templFileName);
-        if (!templFile.exists())
+        if (!templFile.exists()) {
             templFile = new File(templFileName);
-        FileUtils.copyURLToFile(new URL(DEFAULT_REPORT_TEMPLATE_DOWNNLOAD), templFile);
+            FileUtils.copyURLToFile(new URL(DEFAULT_REPORT_TEMPLATE_DOWNNLOAD), templFile);
+        }
         Velocity.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
         Velocity.setProperty("file.resource.loader.path", templFile.getAbsoluteFile().getParent());
         Velocity.init();
