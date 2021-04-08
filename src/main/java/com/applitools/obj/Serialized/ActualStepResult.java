@@ -23,6 +23,7 @@ public class ActualStepResult {
     private String renderId;
     private String source;
     private HashMap expectedImage;
+    private Object activeExpectedMismatchRegions;
 
     public HashMap getExpectedImage() {
         return expectedImage;
@@ -171,4 +172,14 @@ public class ActualStepResult {
     public void setSource(String source) {
         this.source = source;
     }
+
+
+    public Object getActiveExpectedMismatchRegions() {
+        return activeExpectedMismatchRegions;
+    }
+
+    public void setActiveExpectedMismatchRegions(Object activeExpectedMismatchRegions) {
+        this.activeExpectedMismatchRegions = activeExpectedMismatchRegions;
+    }
+
 }
