@@ -1,4 +1,4 @@
-# EyesUtilities [ ![Download](https://api.bintray.com/packages/applitoolseyes/generic/EyesUtilities/images/download.svg) ](https://bintray.com/applitoolseyes/generic/EyesUtilities/_latestVersion)
+# EyesUtilities [ ![Download](https://api.bintray.com/packages/applitoolseyes/generic/EyesUtilities/images/download.svg) ](https://applitools.jfrog.io/artifactory/EyesUtilites/)
 Eyes Utilities is a Java based CLI tool to extend Applitools capabilities by communicating directly to Applitools API.
 Using EyesUtilities it is possible to generate customized offline reports, perform administration operations,
 generate playback and diff animations, download test diffs and original images and perform operations between branches.
