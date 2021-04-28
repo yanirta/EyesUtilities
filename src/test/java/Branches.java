@@ -1,4 +1,4 @@
-import com.applitools.EyesUtilities;
+import com.yanirta.EyesUtilities;
 import org.junit.Test;
 
 public class Branches {
